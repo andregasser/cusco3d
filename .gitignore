@@ -1,0 +1,15 @@
+__pycache__/
+.venv/
+.venv-model/
+*.blend1
+
+# Generated prototypes, duplicate meshes and local slicer output.
+/result.json
+/output/*
+!/output/print_v2/
+/output/print_v2/*
+!/output/print_v2/Cusco_P1S_AMS.3mf
+!/output/print_v2/Cusco_Gesamtansicht.png
+!/output/print_v2/Cusco_Beschriftung.png
+!/output/print_v2/validation.json
+!/output/print_v2/Druckhinweise.md
