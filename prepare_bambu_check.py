@@ -21,6 +21,7 @@ machine=resolve('Bambu Lab P1S 0.4 nozzle')
 process=resolve('0.16mm Optimal @BBL X1C')
 process.update({'name':'Cusco 0.16mm P1S','wall_loops':'3','wall_generator':'arachne','sparse_infill_density':'12%',
     'sparse_infill_pattern':'gyroid','top_shell_layers':'5','bottom_shell_layers':'4',
+    'flush_into_infill':'1','infill_combination':'1',
     'enable_support':'0','brim_type':'no_brim','prime_tower_width':'25',
     'prime_tower_brim_width':'1','prime_tower_rib_wall':'0','prime_tower_rib_width':'0',
     'wipe_tower_x':['226'],'wipe_tower_y':['110'],
@@ -28,7 +29,8 @@ process.update({'name':'Cusco 0.16mm P1S','wall_loops':'3','wall_generator':'ara
 machine['curr_bed_type']='Textured PEI Plate'
 for name,d in [('machine',machine),('process',process)]:
     (OUT/f'{name}.json').write_text(json.dumps(d,indent=2))
-for i,color in enumerate(['#B8A17C','#757575','#B66548','#637D46'],1):
+colors=json.loads((OUT.parent/'validation.json').read_text())['colors'].values()
+for i,color in enumerate(colors,1):
     d=resolve('Generic PLA @BBL P1P')
     d['filament_colour']=[color]; d['name']=f'Cusco PLA {i}'
     d['filament_settings_id']=[d['name']]

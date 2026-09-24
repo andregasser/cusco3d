@@ -1,0 +1,741 @@
+{
+  "measured_date": "2026-09-24",
+  "slicer_version": "02.08.02.61",
+  "note": "Slicer estimates, not physical prints. Final version keeps the 200 x 200 mm footprint and the prior print settings. Cusco is now raised 0.48 mm on a horizontal, locally flattened area inside the model, embedded by 0.48 mm. The terrain-following inlay is a historical intermediate variant. Original baseline sliced 2026-09-22; comparison slices 2026-09-24.",
+  "original_project_sha256": "27372b7c9f1c5296115b0f1c7abd66a86e13276b4a85fcca37f8a5c9ec8c9de5",
+  "final_project_sha256": "325c25795526c0031b034a0181b5ef528fd97d32cb8dc6a7bbc36d356701f3fc",
+  "unchanged_settings": {
+    "layer_height_mm": 0.16,
+    "wall_loops": 3,
+    "sparse_infill_density": "12%",
+    "sparse_infill_pattern": "gyroid",
+    "top_shell_layers": 5,
+    "top_shell_min_thickness_mm": 1,
+    "bottom_shell_layers": 4,
+    "outer_wall_speed_mm_s": 60,
+    "top_surface_speed_mm_s": 70
+  },
+  "net_time_saved_seconds": 3394.109375,
+  "net_time_saved_percent": 3.9371364606208417,
+  "physical_print_verified": false,
+  "measurements": [
+    {
+      "name": "original",
+      "total_estimated_seconds": 86207.5625,
+      "total_filament_g": 306.9818992614746,
+      "filament_changes": 320,
+      "inlay_depth_mm": 0.8,
+      "flush_into_infill": false,
+      "infill_combination": false,
+      "gcode_header": [
+        "; HEADER_BLOCK_START",
+        "; BambuStudio 02.08.02.61",
+        "; model printing time: 23h 50m 16s; total estimated time: 23h 56m 47s",
+        "; total layer number: 149",
+        "; total filament length [mm] : 71507.26,13629.67,12837.59,4951.47",
+        "; total filament volume [cm^3] : 171995.12,32783.20,30878.03,11909.69",
+        "; total filament weight [g] : 213.27,40.65,38.29,14.77",
+        "; filament_density: 1.24,1.24,1.24,1.24",
+        "; filament_diameter: 1.75,1.75,1.75,1.75",
+        "; max_z_height: 24.04",
+        "; filament: 1,2,3,4",
+        "; support_material_on_wipe_tower: 0",
+        "; HEADER_BLOCK_END",
+        ""
+      ],
+      "slice_result": {
+        "error_string": "Success.",
+        "export_time": 12109,
+        "layer_height": 0.1599999964237213,
+        "plate_index": 0,
+        "prepare_time": 7317,
+        "return_code": 0,
+        "sliced_plates": [
+          {
+            "feature_type_times": {
+              "Bottom surface": 1001.4823608398438,
+              "Bridge": 879.25732421875,
+              "Custom": 376.8719787597656,
+              "Flush": 26789.6640625,
+              "Gap infill": 39.42862319946289,
+              "Inner wall": 5958.50146484375,
+              "Internal solid infill": 7073.203125,
+              "Outer wall": 16046.4169921875,
+              "Prime tower": 3890.61767578125,
+              "Sparse infill": 6672.0693359375,
+              "Top surface": 283.34527587890625,
+              "Travel": 17436.990234375,
+              "Undefined": 17422.20703125
+            },
+            "filament_change_times": 320,
+            "filaments": [
+              {
+                "filament_id": "GFL99",
+                "id": 1,
+                "main_used_g": 182.895751953125,
+                "total_used_g": 213.27395629882812
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 2,
+                "main_used_g": 10.33741283416748,
+                "total_used_g": 40.65117263793945
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 3,
+                "main_used_g": 3.2379214763641357,
+                "total_used_g": 38.28875732421875
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 4,
+                "main_used_g": 2.2365708351135254,
+                "total_used_g": 14.768013000488281
+              }
+            ],
+            "generate_support_material_time": 3393,
+            "id": 1,
+            "infill_time": 33465,
+            "layer_filament_change": 0,
+            "main_predication": 55136.21875,
+            "make_perimeters_time": 104524,
+            "obj_cached_cnt": 0,
+            "objects": [
+              {
+                "bbox": {
+                  "depth": 216.0,
+                  "height": 24.04693031311035,
+                  "width": 200.0,
+                  "x": 19.0,
+                  "y": 28.0,
+                  "z": 0.0
+                },
+                "id": 5,
+                "name": "Cusco",
+                "triangle_count": 2153592
+              }
+            ],
+            "sliced_time": 165784,
+            "sliced_time_with_cache": 21639,
+            "total_predication": 86207.5625,
+            "triangle_count": 2153592,
+            "warning_message": ""
+          }
+        ],
+        "sparse_infill_density": 12.0,
+        "wall_loops": 3
+      }
+    },
+    {
+      "name": "original_with_optimized_profile",
+      "total_estimated_seconds": 83063.796875,
+      "total_filament_g": 288.7292232513428,
+      "filament_changes": 320,
+      "inlay_depth_mm": 0.8,
+      "flush_into_infill": true,
+      "infill_combination": true,
+      "gcode_header": [
+        "; HEADER_BLOCK_START",
+        "; BambuStudio 02.08.02.61",
+        "; model printing time: 22h 57m 52s; total estimated time: 23h 4m 23s",
+        "; total layer number: 149",
+        "; total filament length [mm] : 53267.56,15204.44,23383.00,4951.17",
+        "; total filament volume [cm^3] : 128123.49,36570.98,56242.70,11908.97",
+        "; total filament weight [g] : 158.87,45.35,69.74,14.77",
+        "; filament_density: 1.24,1.24,1.24,1.24",
+        "; filament_diameter: 1.75,1.75,1.75,1.75",
+        "; max_z_height: 24.04",
+        "; filament: 1,2,3,4",
+        "; support_material_on_wipe_tower: 0",
+        "; HEADER_BLOCK_END",
+        ""
+      ],
+      "slice_result": {
+        "error_string": "Success.",
+        "export_time": 0,
+        "layer_height": 0.1599999964237213,
+        "plate_index": 1,
+        "prepare_time": 4607,
+        "return_code": 0,
+        "sliced_plates": [
+          {
+            "feature_type_times": {
+              "Bottom surface": 1001.4823608398438,
+              "Bridge": 891.2633056640625,
+              "Custom": 376.8719787597656,
+              "Flush": 25656.0234375,
+              "Gap infill": 40.042755126953125,
+              "Inner wall": 5962.10107421875,
+              "Internal solid infill": 7083.88623046875,
+              "Outer wall": 16050.958984375,
+              "Prime tower": 3856.307373046875,
+              "Sparse infill": 4520.35546875,
+              "Top surface": 283.2160339355469,
+              "Travel": 17531.408203125,
+              "Undefined": 17516.625
+            },
+            "filament_change_times": 320,
+            "filaments": [
+              {
+                "filament_id": "GFL99",
+                "id": 1,
+                "main_used_g": 133.57981872558594,
+                "total_used_g": 158.87313842773438
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 2,
+                "main_used_g": 17.19072151184082,
+                "total_used_g": 45.3480110168457
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 3,
+                "main_used_g": 40.35600662231445,
+                "total_used_g": 69.74095153808594
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 4,
+                "main_used_g": 2.2698521614074707,
+                "total_used_g": 14.767122268676758
+              }
+            ],
+            "generate_support_material_time": 2437,
+            "id": 1,
+            "infill_time": 23737,
+            "layer_filament_change": 0,
+            "main_predication": 53160.40625,
+            "make_perimeters_time": 43827,
+            "obj_cached_cnt": 0,
+            "objects": [
+              {
+                "bbox": {
+                  "depth": 216.0,
+                  "height": 24.04693031311035,
+                  "width": 200.0,
+                  "x": 19.0,
+                  "y": 28.0,
+                  "z": 4.344482462670385e-08
+                },
+                "id": 5,
+                "name": "Cusco",
+                "triangle_count": 2153592
+              }
+            ],
+            "sliced_time": 90218,
+            "sliced_time_with_cache": 17716,
+            "total_predication": 83063.796875,
+            "triangle_count": 2153592,
+            "warning_message": ""
+          }
+        ],
+        "sparse_infill_density": 12.0,
+        "upward_compatible_machine": [
+          "Bambu Lab P1P 0.4 nozzle",
+          "Bambu Lab X1 0.4 nozzle",
+          "Bambu Lab X1 Carbon 0.4 nozzle",
+          "Bambu Lab X1E 0.4 nozzle",
+          "Bambu Lab A1 0.4 nozzle",
+          "Bambu Lab H2D 0.4 nozzle",
+          "Bambu Lab H2D Pro 0.4 nozzle",
+          "Bambu Lab H2S 0.4 nozzle",
+          "Bambu Lab P2S 0.4 nozzle",
+          "Bambu Lab H2C 0.4 nozzle",
+          "Bambu Lab X2D 0.4 nozzle",
+          "Bambu Lab A2L 0.4 nozzle"
+        ],
+        "wall_loops": 3
+      }
+    },
+    {
+      "name": "refined_with_optimized_profile_and_original_inlay_depth",
+      "total_estimated_seconds": 86040.734375,
+      "total_filament_g": 296.3255386352539,
+      "filament_changes": 323,
+      "inlay_depth_mm": 0.8,
+      "flush_into_infill": true,
+      "infill_combination": true,
+      "gcode_header": [
+        "; HEADER_BLOCK_START",
+        "; BambuStudio 02.08.02.61",
+        "; model printing time: 23h 47m 29s; total estimated time: 23h 54m 0s",
+        "; total layer number: 150",
+        "; total filament length [mm] : 54043.74,15836.54,10844.57,18628.25",
+        "; total filament volume [cm^3] : 129990.42,38091.33,26084.25,44806.20",
+        "; total filament weight [g] : 161.19,47.23,32.34,55.56",
+        "; filament_density: 1.24,1.24,1.24,1.24",
+        "; filament_diameter: 1.75,1.75,1.75,1.75",
+        "; max_z_height: 24.20",
+        "; filament: 1,2,3,4",
+        "; support_material_on_wipe_tower: 0",
+        "; HEADER_BLOCK_END",
+        ""
+      ],
+      "slice_result": {
+        "error_string": "Success.",
+        "export_time": 11037,
+        "layer_height": 0.1599999964237213,
+        "plate_index": 1,
+        "prepare_time": 4182,
+        "return_code": 0,
+        "sliced_plates": [
+          {
+            "feature_type_times": {
+              "Bottom surface": 1001.4823608398438,
+              "Bridge": 847.4683227539062,
+              "Custom": 376.8714904785156,
+              "Flush": 26412.78515625,
+              "Gap infill": 40.11685562133789,
+              "Inner wall": 6081.783203125,
+              "Internal solid infill": 7036.3603515625,
+              "Outer wall": 17252.1640625,
+              "Prime tower": 3894.466552734375,
+              "Sparse infill": 4521.83203125,
+              "Top surface": 283.5335693359375,
+              "Travel": 18532.892578125,
+              "Undefined": 18518.111328125
+            },
+            "filament_change_times": 323,
+            "filaments": [
+              {
+                "filament_id": "GFL99",
+                "id": 1,
+                "main_used_g": 133.2597198486328,
+                "total_used_g": 161.18812561035156
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 2,
+                "main_used_g": 18.283056259155273,
+                "total_used_g": 47.233253479003906
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 3,
+                "main_used_g": 8.970320701599121,
+                "total_used_g": 32.34446716308594
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 4,
+                "main_used_g": 34.42045974731445,
+                "total_used_g": 55.5596923828125
+              }
+            ],
+            "generate_support_material_time": 5729,
+            "id": 1,
+            "infill_time": 32145,
+            "layer_filament_change": 0,
+            "main_predication": 55342.41796875,
+            "make_perimeters_time": 103580,
+            "obj_cached_cnt": 0,
+            "objects": [
+              {
+                "bbox": {
+                  "depth": 216.0,
+                  "height": 24.23443031311035,
+                  "width": 200.0,
+                  "x": 19.0,
+                  "y": 28.0,
+                  "z": 0.0
+                },
+                "id": 5,
+                "name": "Cusco",
+                "triangle_count": 2154708
+              }
+            ],
+            "sliced_time": 171127,
+            "sliced_time_with_cache": 25707,
+            "total_predication": 86040.734375,
+            "triangle_count": 2154708,
+            "warning_message": ""
+          }
+        ],
+        "sparse_infill_density": 12.0,
+        "wall_loops": 3
+      }
+    },
+    {
+      "name": "refined_with_front_label_strip",
+      "total_estimated_seconds": 83953.2265625,
+      "total_filament_g": 306.349552154541,
+      "filament_changes": 316,
+      "inlay_depth_mm": 0.64,
+      "flush_into_infill": true,
+      "infill_combination": true,
+      "gcode_header": [
+        "; HEADER_BLOCK_START",
+        "; BambuStudio 02.08.02.61",
+        "; model printing time: 23h 12m 42s; total estimated time: 23h 19m 13s",
+        "; total layer number: 150",
+        "; total filament length [mm] : 71212.51,13466.64,8686.74,9348.10",
+        "; total filament volume [cm^3] : 171286.16,32391.08,20894.05,22484.81",
+        "; total filament weight [g] : 212.39,40.16,25.91,27.88",
+        "; filament_density: 1.24,1.24,1.24,1.24",
+        "; filament_diameter: 1.75,1.75,1.75,1.75",
+        "; max_z_height: 24.20",
+        "; filament: 1,2,3,4",
+        "; support_material_on_wipe_tower: 0",
+        "; HEADER_BLOCK_END",
+        ""
+      ],
+      "slice_result": {
+        "error_string": "Success.",
+        "export_time": 10807,
+        "layer_height": 0.1599999964237213,
+        "plate_index": 1,
+        "prepare_time": 3516,
+        "return_code": 0,
+        "sliced_plates": [
+          {
+            "feature_type_times": {
+              "Bottom surface": 1001.4823608398438,
+              "Bridge": 1187.01708984375,
+              "Custom": 376.8714904785156,
+              "Flush": 26804.74609375,
+              "Gap infill": 40.55294418334961,
+              "Inner wall": 5648.80322265625,
+              "Internal solid infill": 7651.66357421875,
+              "Outer wall": 15578.66796875,
+              "Prime tower": 3811.107666015625,
+              "Sparse infill": 4521.2490234375,
+              "Top surface": 288.1424865722656,
+              "Travel": 17249.361328125,
+              "Undefined": 17234.580078125
+            },
+            "filament_change_times": 316,
+            "filaments": [
+              {
+                "filament_id": "GFL99",
+                "id": 1,
+                "main_used_g": 180.58865356445312,
+                "total_used_g": 212.39483642578125
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 2,
+                "main_used_g": 10.063212394714355,
+                "total_used_g": 40.16493606567383
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 3,
+                "main_used_g": 3.3253118991851807,
+                "total_used_g": 25.908618927001953
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 4,
+                "main_used_g": 2.144697427749634,
+                "total_used_g": 27.881160736083984
+              }
+            ],
+            "generate_support_material_time": 5388,
+            "id": 1,
+            "infill_time": 49429,
+            "layer_filament_change": 0,
+            "main_predication": 52946.30859375,
+            "make_perimeters_time": 61644,
+            "obj_cached_cnt": 0,
+            "objects": [
+              {
+                "bbox": {
+                  "depth": 216.0,
+                  "height": 24.23443031311035,
+                  "width": 200.0,
+                  "x": 19.0,
+                  "y": 28.0,
+                  "z": 0.0
+                },
+                "id": 5,
+                "name": "Cusco",
+                "triangle_count": 2154708
+              }
+            ],
+            "sliced_time": 137249,
+            "sliced_time_with_cache": 17934,
+            "total_predication": 83953.2265625,
+            "triangle_count": 2154708,
+            "warning_message": ""
+          }
+        ],
+        "sparse_infill_density": 12.0,
+        "wall_loops": 3
+      }
+    },
+    {
+      "name": "integrated_topographic_label",
+      "total_estimated_seconds": 82975.5546875,
+      "total_filament_g": 297.15178298950195,
+      "filament_changes": 316,
+      "inlay_depth_mm": 0.64,
+      "flush_into_infill": true,
+      "infill_combination": true,
+      "gcode_header": [
+        "; HEADER_BLOCK_START",
+        "; BambuStudio 02.08.02.61",
+        "; model printing time: 22h 56m 24s; total estimated time: 23h 2m 55s",
+        "; total layer number: 150",
+        "; total filament length [mm] : 68136.49,13458.83,8686.72,9348.08",
+        "; total filament volume [cm^3] : 163887.47,32372.29,20894.01,22484.78",
+        "; total filament weight [g] : 203.22,40.14,25.91,27.88",
+        "; filament_density: 1.24,1.24,1.24,1.24",
+        "; filament_diameter: 1.75,1.75,1.75,1.75",
+        "; max_z_height: 24.20",
+        "; filament: 1,2,3,4",
+        "; support_material_on_wipe_tower: 0",
+        "; HEADER_BLOCK_END",
+        ""
+      ],
+      "slice_result": {
+        "error_string": "Success.",
+        "export_time": 10636,
+        "layer_height": 0.1599999964237213,
+        "plate_index": 1,
+        "prepare_time": 4076,
+        "return_code": 0,
+        "sliced_plates": [
+          {
+            "feature_type_times": {
+              "Bottom surface": 930.4010620117188,
+              "Bridge": 1027.0704345703125,
+              "Custom": 376.9421691894531,
+              "Flush": 26804.966796875,
+              "Gap infill": 39.638893127441406,
+              "Inner wall": 5615.95458984375,
+              "Internal solid infill": 7176.93603515625,
+              "Outer wall": 15568.357421875,
+              "Prime tower": 3811.0595703125,
+              "Sparse infill": 4385.423828125,
+              "Top surface": 188.71389770507812,
+              "Travel": 17247.892578125,
+              "Undefined": 17233.0390625
+            },
+            "filament_change_times": 316,
+            "filaments": [
+              {
+                "filament_id": "GFL99",
+                "id": 1,
+                "main_used_g": 171.41429138183594,
+                "total_used_g": 203.220458984375
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 2,
+                "main_used_g": 10.039912223815918,
+                "total_used_g": 40.141632080078125
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 3,
+                "main_used_g": 3.3269336223602295,
+                "total_used_g": 25.908567428588867
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 4,
+                "main_used_g": 2.1403725147247314,
+                "total_used_g": 27.88112449645996
+              }
+            ],
+            "generate_support_material_time": 7945,
+            "id": 1,
+            "infill_time": 47275,
+            "layer_filament_change": 0,
+            "main_predication": 51968.4609375,
+            "make_perimeters_time": 90664,
+            "obj_cached_cnt": 0,
+            "objects": [
+              {
+                "bbox": {
+                  "depth": 200.0,
+                  "height": 24.23443031311035,
+                  "width": 200.0,
+                  "x": 19.0,
+                  "y": 28.0,
+                  "z": 0.0
+                },
+                "id": 5,
+                "name": "Cusco",
+                "triangle_count": 2082544
+              }
+            ],
+            "sliced_time": 184297,
+            "sliced_time_with_cache": 33566,
+            "total_predication": 82975.5546875,
+            "triangle_count": 2082544,
+            "warning_message": ""
+          }
+        ],
+        "sparse_infill_density": 12.0,
+        "wall_loops": 3
+      }
+    },
+    {
+      "name": "horizontal_label_on_internal_flat_surface",
+      "total_estimated_seconds": 82813.453125,
+      "total_filament_g": 297.1688575744629,
+      "filament_changes": 316,
+      "inlay_depth_mm": 0.64,
+      "flush_into_infill": true,
+      "infill_combination": true,
+      "gcode_header": [
+        "; HEADER_BLOCK_START",
+        "; BambuStudio 02.08.02.61",
+        "; model printing time: 22h 53m 42s; total estimated time: 23h 0m 13s",
+        "; total layer number: 150",
+        "; total filament length [mm] : 68134.20,13466.92,8686.72,9348.01",
+        "; total filament volume [cm^3] : 163881.95,32391.73,20894.01,22484.61",
+        "; total filament weight [g] : 203.21,40.17,25.91,27.88",
+        "; filament_density: 1.24,1.24,1.24,1.24",
+        "; filament_diameter: 1.75,1.75,1.75,1.75",
+        "; max_z_height: 24.20",
+        "; filament: 1,2,3,4",
+        "; support_material_on_wipe_tower: 0",
+        "; HEADER_BLOCK_END",
+        ""
+      ],
+      "slice_result": {
+        "error_string": "Success.",
+        "export_time": 11320,
+        "layer_height": 0.1599999964237213,
+        "plate_index": 1,
+        "prepare_time": 4414,
+        "return_code": 0,
+        "sliced_plates": [
+          {
+            "feature_type_times": {
+              "Bottom surface": 930.4010620117188,
+              "Bridge": 1042.602294921875,
+              "Custom": 376.9421691894531,
+              "Flush": 26804.03125,
+              "Gap infill": 41.156982421875,
+              "Inner wall": 5589.55029296875,
+              "Internal solid infill": 7111.6943359375,
+              "Outer wall": 15544.9443359375,
+              "Prime tower": 3811.076416015625,
+              "Sparse infill": 4385.671875,
+              "Top surface": 194.1020050048828,
+              "Travel": 17174.716796875,
+              "Undefined": 17159.86328125
+            },
+            "filament_change_times": 316,
+            "filaments": [
+              {
+                "filament_id": "GFL99",
+                "id": 1,
+                "main_used_g": 171.40745544433594,
+                "total_used_g": 203.213623046875
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 2,
+                "main_used_g": 10.064022064208984,
+                "total_used_g": 40.16574478149414
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 3,
+                "main_used_g": 3.3269433975219727,
+                "total_used_g": 25.90857696533203
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 4,
+                "main_used_g": 2.1504173278808594,
+                "total_used_g": 27.88091278076172
+              }
+            ],
+            "generate_support_material_time": 8009,
+            "id": 1,
+            "infill_time": 56485,
+            "layer_filament_change": 0,
+            "main_predication": 51807.28125,
+            "make_perimeters_time": 92039,
+            "obj_cached_cnt": 0,
+            "objects": [
+              {
+                "bbox": {
+                  "depth": 200.0,
+                  "height": 24.23443031311035,
+                  "width": 200.0,
+                  "x": 19.0,
+                  "y": 28.0,
+                  "z": 0.0
+                },
+                "id": 5,
+                "name": "Cusco",
+                "triangle_count": 2068988
+              }
+            ],
+            "sliced_time": 188169,
+            "sliced_time_with_cache": 27044,
+            "total_predication": 82813.453125,
+            "triangle_count": 2068988,
+            "warning_message": ""
+          }
+        ],
+        "sparse_infill_density": 12.0,
+        "wall_loops": 3
+      },
+      "lettering_surface": {
+        "plane_z_mm": 15.52,
+        "flat_core_xy_mm": [
+          30.053439372030574,
+          17.45,
+          59.946560627969426,
+          26.05
+        ],
+        "transition_mm": 0.4,
+        "planarity_error_mm": 0.0,
+        "inside_model": true,
+        "mapped_features_covered": 0
+      },
+      "lettering": {
+        "text": "Cusco",
+        "font": "DejaVu Sans",
+        "orientation": "horizontal XY on internal flat terrain patch",
+        "raised_mm": 0.48,
+        "embedded_mm": 0.48,
+        "glyph_height_mm": 7.5,
+        "mapped_features_covered": 0,
+        "separate_apron_mm": 0,
+        "glyph_components": 5,
+        "volume_mm3": 54.45269915008517,
+        "expected_volume_mm3": 54.45269750019209,
+        "bounds": [
+          30.603439331054688,
+          18.0,
+          15.039999961853027,
+          59.39656066894531,
+          25.5,
+          16.0
+        ]
+      }
+    }
+  ],
+  "previous_project_sha256": "48a32484208f5d24d09fbca0271c4476020356b9ac7b1bd6472d7123bf240d05",
+  "terrain_following_label_savings": {
+    "relative_to": "refined_with_front_label_strip",
+    "seconds": 977.671875,
+    "filament_g": 9.197769165039062,
+    "size_xy_before_mm": [
+      200.0,
+      216.0
+    ],
+    "size_xy_after_mm": [
+      200.0,
+      200.0
+    ],
+    "solid_volume_removed_mm3": 16982.659804699302,
+    "feature_material_cells_unchanged": true,
+    "overall_height_unchanged": true,
+    "variant": "integrated_topographic_label"
+  },
+  "flat_label_savings_vs_front_strip": {
+    "seconds": 1139.7734375,
+    "filament_g": 9.180694580078125
+  }
+}

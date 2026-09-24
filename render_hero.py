@@ -56,7 +56,7 @@ def text(body, x, y, size, mat=ink, heavy=False):
 text('PERU  /  PRINT THE ANDES', -.224, .074, .0062, muted)
 text('CUSCO', -.226, .030, .044, heavy=True)
 text('Eine Stadt. Ein Relief.\nVier Farben.', -.224, .005, .008)
-text('20 × 20 km Landschaft\n200 × 216 mm auf deinem Druckbett', -.224, -.032, .0058, muted)
+text('20 × 20 km Landschaft\n200 × 200 mm auf deinem Druckbett', -.224, -.032, .0058, muted)
 text('BAMBU LAB P1S  +  AMS', -.224, -.076, .0058, heavy=True)
 text('Echtes Mesh-Rendering', -.224, -.088, .0052, muted)
 bpy.ops.render.render(write_still=True)

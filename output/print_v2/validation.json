@@ -2,15 +2,16 @@
   "label": "Cusco",
   "size_xy_mm": [
     200.0,
-    216.0
+    200.0
   ],
   "terrain_km": 20,
   "base_mm": 4.0,
+  "inlay_depth_mm": 0.64,
   "layer_height_check_mm": 0.16,
   "colors": {
     "01_Terrain_Sockel": "#B8A17C",
-    "02_Strassen_Schrift": "#757575",
-    "03_Gebaeude": "#B66548",
+    "02_Strassen_Schrift": "#64696C",
+    "03_Gebaeude": "#AC5438",
     "04_Vegetation": "#637D46"
   },
   "dem": {
@@ -32,28 +33,61 @@
     "roads": 7462,
     "building_footprints": 97252,
     "green_areas": 1056,
-    "mapped_trees": 780
+    "mapped_trees": 780,
+    "airport": {
+      "runway": 1,
+      "taxiway": 18,
+      "apron": 2
+    }
   },
+  "airport_source_timestamp": "2026-07-15T15:22:01Z",
+  "feature_relief_mm": {
+    "building_roof_offset": 1.2,
+    "road_offset": 0.32,
+    "airport_offset": 0.4,
+    "note": "Cell targets blended at shared mesh vertices; roof offset above block maximum."
+  },
+  "airport_cells": 646,
   "material_cells": [
-    424006,
-    108588,
-    23301,
-    22497
+    381061,
+    109211,
+    23258,
+    22290
   ],
+  "cropped_front_margin_mm": 16.0,
+  "interior_sampling_preserved": true,
+  "lettering_surface": {
+    "plane_z_mm": 15.52,
+    "flat_core_xy_mm": [
+      30.053439372030574,
+      17.45,
+      59.946560627969426,
+      26.05
+    ],
+    "transition_mm": 0.4,
+    "planarity_error_mm": 0.0,
+    "inside_model": true,
+    "mapped_features_covered": 0
+  },
   "lettering": {
     "text": "Cusco",
     "font": "DejaVu Sans",
-    "orientation": "horizontal XY",
+    "orientation": "horizontal XY on internal flat terrain patch",
     "raised_mm": 0.48,
     "embedded_mm": 0.48,
     "glyph_height_mm": 7.5,
+    "mapped_features_covered": 0,
+    "separate_apron_mm": 0,
+    "glyph_components": 5,
+    "volume_mm3": 54.45269915008517,
+    "expected_volume_mm3": 54.45269750019209,
     "bounds": [
-      85.60343933105469,
-      2.25,
-      3.5199999809265137,
-      114.39656066894531,
-      9.75,
-      4.480000019073486
+      30.603439331054688,
+      18.0,
+      15.039999961853027,
+      59.39656066894531,
+      25.5,
+      16.0
     ]
   },
   "parts": [
@@ -61,32 +95,32 @@
       "name": "01_Terrain_Sockel",
       "watertight": true,
       "winding_consistent": true,
-      "volume_mm3": 521000.27971163247,
-      "triangles": 1307044
+      "volume_mm3": 506054.4693523413,
+      "triangles": 1220632
     },
     {
       "name": "02_Strassen_Schrift",
       "watertight": true,
       "winding_consistent": true,
-      "volume_mm3": 8151.054536037951,
-      "triangles": 580692
+      "volume_mm3": 7949.508738899873,
+      "triangles": 583772
     },
     {
       "name": "03_Gebaeude",
       "watertight": true,
       "winding_consistent": true,
-      "volume_mm3": 2964.128529018735,
-      "triangles": 155504
+      "volume_mm3": 3034.7195664955175,
+      "triangles": 155280
     },
     {
       "name": "04_Vegetation",
       "watertight": true,
       "winding_consistent": true,
-      "volume_mm3": 1908.0736919378562,
-      "triangles": 110352
+      "volume_mm3": 1638.4040072270109,
+      "triangles": 109304
     }
   ],
-  "boolean_zero_volume_fragments_removed": 17,
+  "boolean_zero_volume_fragments_removed": 48,
   "connected_components": 1,
   "overall_bounds_mm": [
     [
@@ -96,14 +130,14 @@
     ],
     [
       200.0,
-      216.0,
-      24.046932220458984
+      200.0,
+      24.234432220458984
     ]
   ],
   "dimensions_mm": [
     200.0,
-    216.0,
-    24.046932220458984
+    200.0,
+    24.234432220458984
   ],
   "pairwise_intersections": [
     {
@@ -111,114 +145,114 @@
         1,
         2
       ],
-      "intersection_mm3": 0.00024593685237764
+      "intersection_mm3": 7.406393183551019e-06
     },
     {
       "parts": [
         1,
         3
       ],
-      "intersection_mm3": 0.00014185288124821837
+      "intersection_mm3": 0.00016091829026930547
     },
     {
       "parts": [
         1,
         4
       ],
-      "intersection_mm3": 9.573505183047004e-15
+      "intersection_mm3": 1.135246410766122e-14
     },
     {
       "parts": [
         2,
         3
       ],
-      "intersection_mm3": 2.4185514702068645e-14
+      "intersection_mm3": 6.69568567257528e-14
     },
     {
       "parts": [
         2,
         4
       ],
-      "intersection_mm3": 2.732189474663471e-15
+      "intersection_mm3": 1.6518904299989146e-14
     },
     {
       "parts": [
         3,
         4
       ],
-      "intersection_mm3": 5.995204332975845e-15
+      "intersection_mm3": 1.1102230246251565e-15
     }
   ],
   "cross_section_checks": {
-    "count": 150,
+    "count": 151,
     "all_nonempty": true,
-    "min_area_mm2": 0.13904071636892112
+    "min_area_mm2": 0.1406329084427398
   },
   "bambu_studio": {
     "version": "02.08.02.61",
     "result": {
       "error_string": "Success.",
-      "export_time": 12109,
+      "export_time": 11320,
       "layer_height": 0.1599999964237213,
-      "plate_index": 0,
-      "prepare_time": 7317,
+      "plate_index": 1,
+      "prepare_time": 4414,
       "return_code": 0,
       "sliced_plates": [
         {
           "feature_type_times": {
-            "Bottom surface": 1001.4823608398438,
-            "Bridge": 879.25732421875,
-            "Custom": 376.8719787597656,
-            "Flush": 26789.6640625,
-            "Gap infill": 39.42862319946289,
-            "Inner wall": 5958.50146484375,
-            "Internal solid infill": 7073.203125,
-            "Outer wall": 16046.4169921875,
-            "Prime tower": 3890.61767578125,
-            "Sparse infill": 6672.0693359375,
-            "Top surface": 283.34527587890625,
-            "Travel": 17436.990234375,
-            "Undefined": 17422.20703125
+            "Bottom surface": 930.4010620117188,
+            "Bridge": 1042.602294921875,
+            "Custom": 376.9421691894531,
+            "Flush": 26804.03125,
+            "Gap infill": 41.156982421875,
+            "Inner wall": 5589.55029296875,
+            "Internal solid infill": 7111.6943359375,
+            "Outer wall": 15544.9443359375,
+            "Prime tower": 3811.076416015625,
+            "Sparse infill": 4385.671875,
+            "Top surface": 194.1020050048828,
+            "Travel": 17174.716796875,
+            "Undefined": 17159.86328125
           },
-          "filament_change_times": 320,
+          "filament_change_times": 316,
           "filaments": [
             {
               "filament_id": "GFL99",
               "id": 1,
-              "main_used_g": 182.895751953125,
-              "total_used_g": 213.27395629882812
+              "main_used_g": 171.40745544433594,
+              "total_used_g": 203.213623046875
             },
             {
               "filament_id": "GFL99",
               "id": 2,
-              "main_used_g": 10.33741283416748,
-              "total_used_g": 40.65117263793945
+              "main_used_g": 10.064022064208984,
+              "total_used_g": 40.16574478149414
             },
             {
               "filament_id": "GFL99",
               "id": 3,
-              "main_used_g": 3.2379214763641357,
-              "total_used_g": 38.28875732421875
+              "main_used_g": 3.3269433975219727,
+              "total_used_g": 25.90857696533203
             },
             {
               "filament_id": "GFL99",
               "id": 4,
-              "main_used_g": 2.2365708351135254,
-              "total_used_g": 14.768013000488281
+              "main_used_g": 2.1504173278808594,
+              "total_used_g": 27.88091278076172
             }
           ],
-          "generate_support_material_time": 3393,
+          "generate_support_material_time": 8009,
           "id": 1,
-          "infill_time": 33465,
+          "infill_time": 56485,
           "layer_filament_change": 0,
-          "main_predication": 55136.21875,
-          "make_perimeters_time": 104524,
+          "main_predication": 51807.28125,
+          "make_perimeters_time": 92039,
           "obj_cached_cnt": 0,
           "objects": [
             {
               "bbox": {
-                "depth": 216.0,
-                "height": 24.04693031311035,
+                "depth": 200.0,
+                "height": 24.23443031311035,
                 "width": 200.0,
                 "x": 19.0,
                 "y": 28.0,
@@ -226,13 +260,13 @@
               },
               "id": 5,
               "name": "Cusco",
-              "triangle_count": 2153592
+              "triangle_count": 2068988
             }
           ],
-          "sliced_time": 165784,
-          "sliced_time_with_cache": 21639,
-          "total_predication": 86207.5625,
-          "triangle_count": 2153592,
+          "sliced_time": 188169,
+          "sliced_time_with_cache": 27044,
+          "total_predication": 82813.453125,
+          "triangle_count": 2068988,
           "warning_message": ""
         }
       ],
@@ -242,7 +276,7 @@
     "four_part_assignment_verified": true,
     "native_import_mesh_repairs": [
       {
-        "face_count": "1307044",
+        "face_count": "1220632",
         "edges_fixed": "0",
         "degenerate_facets": "0",
         "facets_removed": "0",
@@ -250,7 +284,7 @@
         "backwards_edges": "0"
       },
       {
-        "face_count": "580692",
+        "face_count": "583772",
         "edges_fixed": "0",
         "degenerate_facets": "0",
         "facets_removed": "0",
@@ -258,7 +292,7 @@
         "backwards_edges": "0"
       },
       {
-        "face_count": "155504",
+        "face_count": "155280",
         "edges_fixed": "0",
         "degenerate_facets": "0",
         "facets_removed": "0",
@@ -266,7 +300,7 @@
         "backwards_edges": "0"
       },
       {
-        "face_count": "110352",
+        "face_count": "109304",
         "edges_fixed": "0",
         "degenerate_facets": "0",
         "facets_removed": "0",
@@ -277,25 +311,25 @@
     "gcode_header": [
       "; HEADER_BLOCK_START",
       "; BambuStudio 02.08.02.61",
-      "; model printing time: 23h 50m 16s; total estimated time: 23h 56m 47s",
-      "; total layer number: 149",
-      "; total filament length [mm] : 71507.26,13629.67,12837.59,4951.47",
-      "; total filament volume [cm^3] : 171995.12,32783.20,30878.03,11909.69",
-      "; total filament weight [g] : 213.27,40.65,38.29,14.77",
+      "; model printing time: 22h 53m 42s; total estimated time: 23h 0m 13s",
+      "; total layer number: 150",
+      "; total filament length [mm] : 68134.20,13466.92,8686.72,9348.01",
+      "; total filament volume [cm^3] : 163881.95,32391.73,20894.01,22484.61",
+      "; total filament weight [g] : 203.21,40.17,25.91,27.88",
       "; filament_density: 1.24,1.24,1.24,1.24",
       "; filament_diameter: 1.75,1.75,1.75,1.75",
-      "; max_z_height: 24.04",
+      "; max_z_height: 24.20",
       "; filament: 1,2,3,4",
       "; support_material_on_wipe_tower: 0",
       "; HEADER_BLOCK_END",
       ""
     ],
-    "project_sha256": "27372b7c9f1c5296115b0f1c7abd66a86e13276b4a85fcca37f8a5c9ec8c9de5"
+    "project_sha256": "325c25795526c0031b034a0181b5ef528fd97d32cb8dc6a7bbc36d356701f3fc"
   },
   "stl_sha256": {
-    "01_Terrain_Sockel.stl": "5e9dec5396f33813b1cbc52ca2f9b435dacff6dc64e7c010c15ac76c1910d430",
-    "02_Strassen_Schrift.stl": "badfb775e66a7e644d65daaeabc9ec3602833f79e3deb04e422d8aa630561fe6",
-    "03_Gebaeude.stl": "28a9b7ec8d1a416ce1448ccbc5fa94984816f584151c1af3c1ca7fde4245d5ec",
-    "04_Vegetation.stl": "42c20778ec68698cf187e7bd1c6c4d3b27cee1be04b46aa9dabdb1c640a0617d"
+    "01_Terrain_Sockel.stl": "62aa7c4378b40f2b543c2a405c2120b290a3279a9c9a41a440df5e7597cacf40",
+    "02_Strassen_Schrift.stl": "055d72c1a82a5164c5bc6a796e9853a125a183fea1b88d5d3455d7cb5e8d35ce",
+    "03_Gebaeude.stl": "164805ca8876fccad966453c031d04e77aef6bef8813038d96646a76fe327d46",
+    "04_Vegetation.stl": "7a45acd34d2c81ed662f698f888fe642c3bfc140822fa26746dc7840720de4f1"
   }
 }

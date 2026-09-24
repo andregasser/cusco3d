@@ -11,5 +11,7 @@ __pycache__/
 !/output/print_v2/Cusco_P1S_AMS.3mf
 !/output/print_v2/Cusco_Gesamtansicht.png
 !/output/print_v2/Cusco_Beschriftung.png
+!/output/print_v2/Cusco_Flughafen.png
+!/output/print_v2/print_time_comparison.json
 !/output/print_v2/validation.json
 !/output/print_v2/Druckhinweise.md
