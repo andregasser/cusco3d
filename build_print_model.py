@@ -15,6 +15,9 @@ from matplotlib.textpath import TextPath
 from matplotlib.font_manager import FontProperties
 from shapely.geometry import Polygon
 from shapely.affinity import scale, translate
+import rasterio
+from rasterio.warp import reproject, Resampling
+from rasterio.transform import from_bounds
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / 'output/print_v2'
@@ -35,7 +38,12 @@ NAMES = ['01_Terrain_Sockel', '02_Strassen_Schrift', '03_Gebaeude', '04_Vegetati
 COLORS = ['#B8A17C', '#64696C', '#AC5438', '#637D46']
 BUILDING_RISE, ROAD_RISE, AIRPORT_RISE = 1.20, .32, .40
 INLAY_DEPTH = .64  # Four 0.16 mm layers below terrain, plus the visible relief.
-LABEL_RISE, LABEL_DEPTH = .48, .48
+LABEL_RISE, LABEL_DEPTH = .64, .48
+LABEL_WIDTH, LABEL_HEIGHT = 28.8, 7.5
+ROAD_WIDTHS = {'motorway':.95,'trunk':.95,'primary':.85,'secondary':.8,'tertiary':.7,
+               'residential':.6,'living_street':.6,'unclassified':.6,
+               'motorway_link':.6,'trunk_link':.6,'primary_link':.6,
+               'secondary_link':.6,'tertiary_link':.6}
 report = {'label': LABEL, 'size_xy_mm': [SIZE, SIZE], 'terrain_km':20,
           'base_mm': BASE, 'inlay_depth_mm': INLAY_DEPTH,
           'layer_height_check_mm': .16, 'colors': dict(zip(NAMES,COLORS))}
@@ -74,6 +82,60 @@ def terrain():
 def xy(p):
     return ((p['lon']-WEST)/DLON*SIZE/DX, (SAMPLING_APRON+(p['lat']-SOUTH)/DLAT*SIZE)/DY)
 
+def landcover():
+    """Aggregate categorical WorldCover data to the terrain cells, north up first."""
+    source=ROOT/'data/cusco_worldcover_2021.tif'
+    classes=np.zeros((NY,NX),dtype=np.uint8)
+    transform=from_bounds(WEST,SOUTH-SAMPLING_APRON/SIZE*DLAT,WEST+DLON,SOUTH+DLAT,NX,NY)
+    with rasterio.open(source) as src:
+        reproject(rasterio.band(src,1),classes,src_transform=src.transform,src_crs=src.crs,
+                  dst_transform=transform,dst_crs='EPSG:4326',resampling=Resampling.mode,
+                  src_nodata=0,dst_nodata=0)
+    classes=np.flipud(classes).copy()  # Mesh y increases northwards.
+    interior=classes[math.ceil(SAMPLING_APRON/DY):]
+    assert np.all(interior>0), 'Missing land-cover data inside model'
+    values,counts=np.unique(interior,return_counts=True)
+    report['landcover']={'dataset':'ESA WorldCover 2021 v200','source_resolution_m':10,
+      'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
+      'resampling':'mode, then north-up rows reversed into south-to-north mesh',
+      'class_cells':{str(k):int(v) for k,v in zip(values,counts)},
+      'green_classes':[10,20,30,40,90,95,100],'unclassified_interior_cells':0,
+      'vegetation_rise_mm':0,'note':'Land-cover classes, not seasonal or satellite RGB colours.'}
+    return np.isin(classes,[10,20,30,40,90,95,100])
+
+def repair_material_contacts(mat):
+    """Resolve diagonal-only contacts by filling one cell; never erase roads.
+
+    Material priority only increases, so repairs cannot oscillate. At each
+    ambiguous 2x2 block choose a single replacement that resolves that block.
+    Roads take precedence over buildings, vegetation and background.
+    """
+    rank=np.array([0,3,2,1])
+    def ambiguous(a):
+        p,q,r,s=a.ravel()
+        return (p==s and p!=q and p!=r) or (q==r and q!=p and q!=s)
+    for iteration in range(100):
+        a,b,c,d=mat[:-1,:-1],mat[:-1,1:],mat[1:,:-1],mat[1:,1:]
+        bad=((a==d)&(a!=b)&(a!=c))|((b==c)&(b!=a)&(b!=d))
+        if not bad.any(): return iteration
+        for j,i in zip(*np.where(bad)):
+            block=mat[j:j+2,i:i+2]
+            if not ambiguous(block): continue
+            winner=block.ravel()[np.argmax(rank[block.ravel()])]
+            candidates=[]
+            for dj,di in [(0,0),(0,1),(1,0),(1,1)]:
+                if block[dj,di]==winner: continue
+                trial=block.copy(); trial[dj,di]=winner
+                if ambiguous(trial): continue
+                jj,ii=j+dj,i+di
+                if jj in (0,mat.shape[0]-1) or ii in (0,mat.shape[1]-1): continue
+                support=np.count_nonzero(mat[max(0,jj-1):jj+2,max(0,ii-1):ii+2]==winner)
+                candidates.append((int(rank[block[dj,di]]),-support,dj,di))
+            assert candidates, 'Cannot resolve material contact without altering model rim'
+            _,_,dj,di=min(candidates)
+            block[dj,di]=winner
+    raise ValueError('Could not resolve diagonal material contacts')
+
 def raster_layers():
     roads=Image.new('1',(NX,NY)); buildings=Image.new('1',(NX,NY)); green=Image.new('1',(NX,NY))
     airport=Image.new('1',(NX,NY)); da=ImageDraw.Draw(airport)
@@ -81,8 +143,8 @@ def raster_layers():
     counts={'roads':0,'building_footprints':0,'green_areas':0,'mapped_trees':0}
     osm=json.loads((ROOT/'data/cusco_osm.json').read_text())['elements']
     # Keep main network legible. Minor service alleys are intentionally omitted.
-    widths={'motorway':.95,'trunk':.95,'primary':.85,'secondary':.8,'tertiary':.7,
-            'residential':.6,'living_street':.6,'unclassified':.6}
+    widths=ROAD_WIDTHS
+    counts['road_links']=0
     for e in osm:
         tags=e.get('tags',{}); g=e.get('geometry',[])
         if len(g)<2: continue
@@ -93,6 +155,7 @@ def raster_layers():
         elif tags.get('highway') in widths:
             dr.line(pts,fill=1,width=max(2,round(widths[tags['highway']]/DX)),joint='curve')
             counts['roads']+=1
+            counts['road_links']+=int(tags['highway'].endswith('_link'))
     # Separate OSM query: the original highway/building selection omitted airfields.
     airport_data=json.loads((ROOT/'data/cusco_airport.json').read_text())
     counts['airport']={'runway':0,'taxiway':0,'apron':0}
@@ -123,24 +186,35 @@ def raster_layers():
     b=ndi.binary_dilation(b,iterations=1)
     b=ndi.binary_closing(b,structure=np.ones((2,2)))
     r=np.array(roads,dtype=bool); g=np.array(green,dtype=bool)
+    satellite_green=landcover()
+    # Keep the existing horizontal sand-coloured lettering landing. Only the
+    # new land-cover tint is excluded here; mapped OSM features stay protected.
+    xmin,ymin,xmax,ymax=label_shape().bounds
+    label_rows=slice(math.floor((ymin-1.5+SAMPLING_APRON)/DY),math.ceil((ymax+1.5+SAMPLING_APRON)/DY))
+    label_cols=slice(math.floor((xmin-1.5)/DX),math.ceil((xmax+1.5)/DX))
+    report['landcover']['label_patch_green_cells_excluded']=int(satellite_green[label_rows,label_cols].sum())
+    satellite_green[label_rows,label_cols]=False
     mat=np.zeros((NY,NX),np.uint8)
     air=np.array(airport,dtype=bool)
-    mat[g]=3; mat[b]=2; mat[r|air]=1
+    mat[g|satellite_green]=3; mat[b]=2; mat[r|air]=1
     mat[:math.ceil(SAMPLING_APRON/DY)]=0
     mat[[0,-1],:]=0; mat[:,[0,-1]]=0
     # Remove isolated pixel specks that would be below nozzle width.
-    for k in (1,2,3):
+    for k in (2,3):
         lab,n=ndi.label(mat==k)
         sizes=np.bincount(lab.ravel()); keep=sizes>=4; keep[0]=False
         mat[(mat==k)&~keep[lab]]=0
-    # Eliminate edge/vertex-only diagonal contacts in every material.
-    for iteration in range(100):
-        a,b,c,d=mat[:-1,:-1],mat[:-1,1:],mat[1:,:-1],mat[1:,1:]
-        bad=((a==d)&(a!=b)&(a!=c))|((b==c)&(b!=a)&(b!=d))
-        if not bad.any(): break
-        jj,ii=np.where(bad)
-        for dj,di in [(0,0),(0,1),(1,0),(1,1)]: mat[jj+dj,ii+di]=0
-    else: raise ValueError('Could not remove diagonal material contacts')
+    before=mat.copy()
+    iterations=repair_material_contacts(mat)
+    assert np.all(mat[before==1]==1), 'Contact repair removed a road or airport cell'
+    # Every connected road raster remains in a single final road component.
+    old,n=ndi.label(before==1); new,_=ndi.label(mat==1)
+    lo=ndi.minimum(new,old,np.arange(1,n+1)); hi=ndi.maximum(new,old,np.arange(1,n+1))
+    assert np.all(lo==hi) and np.all(lo>0), 'Contact repair split a road'
+    report['road_topology']={'source_road_airport_cells':int((before==1).sum()),
+      'source_cells_removed':0,'components_before':int(n),'components_after':int(ndi.label(mat==1)[1]),
+      'existing_components_preserved':True,'repair_iterations':iterations,
+      'cells_reassigned':int((before!=mat).sum()),'road_cells_added':int(((before!=1)&(mat==1)).sum())}
     report['osm']=counts
     report['airport_source_timestamp']=airport_data['osm3s']['timestamp_osm_base']
     report['feature_relief_mm']={'building_roof_offset':BUILDING_RISE,
@@ -157,7 +231,8 @@ def surface_heights(z,mat,airport):
     roofs=peaks[lab]+BUILDING_RISE
     # Flat connected city-block roofs; heights schematic where no measured data exists.
     street_rise=np.where(airport,AIRPORT_RISE,ROAD_RISE)
-    target=np.where(mat==2,roofs,center+np.where(mat==1,street_rise,np.where(mat==3,.35,0)))
+    # Vegetation is a surface colour, without raising entire mountainsides.
+    target=np.where(mat==2,roofs,center+np.where(mat==1,street_rise,0))
     extra=target-center
     ev=np.zeros_like(z); cnt=np.zeros_like(z)
     for dj,di in [(0,0),(1,0),(0,1),(1,1)]:
@@ -222,15 +297,15 @@ def solid_for_material(k,x,y,upper,lower,mat):
     return solid
 
 def label_shape():
-    path=TextPath((0,0),LABEL,size=12,prop=FontProperties(fname='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'))
+    path=TextPath((0,0),LABEL,size=12,prop=FontProperties(fname='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'))
     shape=Polygon()
     # XOR contours preserves the counters inside c, s, etc. across glyphs.
     for contour in path.to_polygons():
         poly=Polygon(contour)
         if poly.is_valid and poly.area>0: shape=shape.symmetric_difference(poly)
     xmin,ymin,xmax,ymax=shape.bounds
-    factor=7.5/(ymax-ymin)
-    shape=scale(shape,factor,factor,origin=(0,0))
+    # Stronger strokes inside the existing lettering footprint and flat landing.
+    shape=scale(shape,LABEL_WIDTH/(xmax-xmin),LABEL_HEIGHT/(ymax-ymin),origin=(0,0))
     xmin,ymin,xmax,ymax=shape.bounds
     # A feature-free patch on the southwest hillside, inside the original crop.
     shape=translate(shape,45-(xmin+xmax)/2,18-ymin)
@@ -276,8 +351,9 @@ def text_solid(shape,level):
     assert abs(label.volume()-shape.area*(LABEL_DEPTH+LABEL_RISE))<.02, 'Nonuniform letter extrusion'
     glyphs=[c for c in label.decompose() if abs(c.volume())>1e-6]
     assert len(glyphs)==len(LABEL), 'A glyph is missing or fragmented'
-    report['lettering']={'text':LABEL,'font':'DejaVu Sans','orientation':'horizontal XY on internal flat terrain patch',
-      'raised_mm':LABEL_RISE,'embedded_mm':LABEL_DEPTH,'glyph_height_mm':7.5,
+    report['lettering']={'text':LABEL,'font':'DejaVu Sans Bold','orientation':'horizontal XY on internal flat terrain patch',
+      'raised_mm':LABEL_RISE,'embedded_mm':LABEL_DEPTH,'glyph_height_mm':LABEL_HEIGHT,
+      'glyph_width_mm':LABEL_WIDTH,
       'mapped_features_covered':0,'separate_apron_mm':0,'glyph_components':len(glyphs),
       'volume_mm3':label.volume(),'expected_volume_mm3':shape.area*(LABEL_DEPTH+LABEL_RISE),
       'bounds':list(label.bounding_box())}

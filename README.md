@@ -23,9 +23,9 @@
 
 ## Die Anden im kleinen Maßstab
 
-Dieses Relief zeigt **20 × 20 km rund um Cusco**: das Tal, seine Berghänge, Straßen, Häusergruppen und kartierte Grünflächen. SRTM-Höhendaten liefern die Landschaft, OpenStreetMap die Stadtstrukturen.
+Dieses Relief zeigt **20 × 20 km rund um Cusco**: das Tal, seine Berghänge, Straßen, Häusergruppen und kartierte Grünflächen. SRTM-Höhendaten liefern die Landschaft, OpenStreetMap die Stadtstrukturen. ESA WorldCover 2021 ergänzt die flächendeckende Landbedeckung.
 
-Ein geschlossener Unterbau mit ebener Unterseite trägt das Modell. **„Cusco“ steht waagerecht auf einer kleinen ebenen Fläche innerhalb des Modells** vorne links. Nur dieser etwa 30 × 9 mm große Bereich ist eingeebnet; die grauen Buchstaben sind 0,48 mm erhaben. Der zusätzliche vordere Beschriftungsstreifen entfällt. Vier getrennte Farbvolumen bilden gemeinsam das zusammenhängende Relief.
+Ein geschlossener Unterbau mit ebener Unterseite trägt das Modell. **„Cusco“ steht waagerecht auf einer kleinen ebenen Fläche innerhalb des Modells** vorne links. Nur dieser etwa 30 × 9 mm große Bereich ist eingeebnet; die kräftigen grauen Buchstaben sind 0,64 mm erhaben. Der zusätzliche vordere Beschriftungsstreifen entfällt. Vier getrennte Farbvolumen bilden gemeinsam das zusammenhängende Relief.
 
 > **Digital geprüft, noch nicht physisch probegedruckt.** Geometrieprüfung und vollständiger Probeschnitt in Bambu Studio waren erfolgreich. Die Bilder sind Renderings der tatsächlichen Druckmeshes, keine Fotos eines fertigen Drucks.
 
@@ -47,7 +47,9 @@ Zum Drucken sind weder Python noch Blender erforderlich. Die 3MF ist ein editier
 | 3 | Gebäude | Terrakotta · `#AC5438` |
 | 4 | Vegetation | Gedämpftes Grün · `#637D46` |
 
-Eine reduzierte, landschaftlich orientierte Palette, keine Satellitenbild-Textur. Filament und Beleuchtung beeinflussen den tatsächlichen Eindruck.
+Die Farbverteilung verbindet OSM mit **ESA WorldCover 2021 v200** (10 m). Wald, Grasland, Buschland und Ackerflächen teilen sich den Grünton; Gebäude, Straßen und Flughafen haben Vorrang. Die Klassen werden per Mehrheitsklasse auf das rund 27-m-Modellraster übertragen. Kleine isolierte Flecken entfallen für die Druckbarkeit. Rund **72 % der Modelloberfläche in der Draufsicht** sind dadurch grün.
+
+Die vier Farben bleiben eine vereinfachte Palette, keine Satellitenbild-Textur oder jahreszeitliche Farbaufnahme. Braun umfasst den Sockel, die Schriftfläche und übrige Oberflächen; auch Wasser erhält mangels eigener Farbe diesen Grundton. Filament und Beleuchtung beeinflussen den tatsächlichen Eindruck.
 
 <details>
 <summary><strong>Flughafen und Stadtstrukturen im Detail</strong></summary>
@@ -69,10 +71,10 @@ Echtes Rendering der Druckmeshes; keine zusätzlichen Farben oder aufgemalten De
 | Innere Optimierungen | Füllschichten kombinieren; in Füllung spülen |
 | Stützen | Aus |
 | Modellabmessungen | 200 × 200 × 24,23 mm |
-| Geschätzte Druckzeit | ca. 23 h 00 min |
-| Geschätzter Materialbedarf | ca. 297 g inklusive Spülabfall |
+| Geschätzte Druckzeit | ca. 25 h 12 min |
+| Geschätzter Materialbedarf | ca. 308 g inklusive Spülabfall |
 
-Die Schätzungen stammen aus dem Probeschnitt mit **Bambu Studio 2.8.2.61**: 150 Schichten und 316 Filamentwechsel. Andere Filamente und Einstellungen ändern diese Werte. Die geprüfte Platzierung des Spülturms neben dem Modell ist im Projekt enthalten.
+Die Schätzungen stammen aus dem Probeschnitt mit **Bambu Studio 2.8.2.61**: 150 Schichten und 349 Filamentwechsel. Andere Filamente und Einstellungen ändern diese Werte. Die geprüfte Platzierung des Spülturms neben dem Modell ist im Projekt enthalten.
 
 ### Was die Zeitoptimierung tatsächlich bringt
 
@@ -80,20 +82,21 @@ Die Schätzungen stammen aus dem Probeschnitt mit **Bambu Studio 2.8.2.61**: 150
 | --- | --- | --- |
 | Ursprüngliches Modell und Profil | 23 h 56 min 47 s | 307 g |
 | Verbesserte Stadt und Flughafen, noch mit vorderem Schriftstreifen | 23 h 19 min 13 s | 306 g |
-| Aktuell: waagerechte Schrift auf ebener Fläche innerhalb des Modells | **23 h 00 min 13 s** | **297 g** |
+| Vorher: kräftige waagerechte Schrift, nur OSM-Grünflächen | 23 h 01 min 38 s | 297 g |
+| Aktuell: ergänzte Straßenverbindungen und WorldCover-Vegetation | **25 h 12 min 02 s** | **308 g** |
 
-Die aktuelle Fassung mit ebener Schriftfläche innerhalb des Modells spart gegenüber der Fassung mit vorderem Schriftstreifen **19 Minuten und 9,2 g PLA**. Gegenüber dem ursprünglichen Projekt sind es insgesamt **56 min 34 s**. Der Landschaftsausschnitt, das Raster der Stadtstrukturen und die Gebäudehöhen bleiben erhalten; nur die kleine freie Schriftfläche wird eingeebnet. Alle sechs Vergleichsergebnisse stehen in [print_time_comparison.json](output/print_v2/print_time_comparison.json).
+Die vollständigere Vegetationsverteilung und die überarbeiteten Straßen erhöhen den geschätzten Aufwand gegenüber der letzten Fassung um **2 h 10 min und 10,8 g PLA**. Die neue Fassung ist damit auch rund **1 h 15 min langsamer als das ursprüngliche Modell**. Die inneren Druckoptimierungen bleiben aktiviert, gleichen den Mehraufwand der neuen Farbverteilung aber nicht aus. Der Landschaftsausschnitt und die ebene Schriftfläche bleiben erhalten. Alle acht Vergleichsergebnisse stehen in [print_time_comparison.json](output/print_v2/print_time_comparison.json).
 
 Die sichtbare Auflösung bleibt bei **0,16 mm**, mit drei Wänden, 12 % Gyroid und unveränderten Oberflächengeschwindigkeiten. Kombinierte Füllschichten betreffen das Innere; beim Spülen in die Füllung ist deckendes PLA erforderlich, damit Mischfarben nicht durchscheinen. Diese Funktionsweise beschreibt auch [Bambu Studio](https://raw.githubusercontent.com/bambulab/BambuStudio/master/src/libslic3r/PrintConfig.cpp).
 
-Die 316 Farbwechsel und rund 7½ Stunden Spülzeit bleiben der große Aufwand. Gröbere Schichten oder weniger Farben wären sichtbare Kompromisse. Ein physischer Probedruck zur Bestätigung von Farbdurchdeckung, Haftung und Oberfläche steht noch aus.
+Die 349 Farbwechsel und rund 8 h 11 min Spülzeit bleiben der große Aufwand. Gröbere Schichten oder weniger Farben wären sichtbare Kompromisse. Ein physischer Probedruck zur Bestätigung von Farbdurchdeckung, Haftung und Oberfläche steht noch aus.
 
 <details>
 <summary><strong>Beschriftung aus der Nähe ansehen</strong></summary>
 
 ![Waagerechte Cusco-Beschriftung auf einer ebenen Fläche innerhalb des Modells](output/print_v2/Cusco_Beschriftung.png)
 
-DejaVu Sans, 7,5 mm Schriftbildhöhe in der Draufsicht; 0,48 mm in die ebene Fläche eingebettet und 0,48 mm erhaben. Alle fünf Buchstaben stehen auf derselben waagerechten Ebene. Die rund 30 × 9 mm große Fläche geht über einen schmalen Rand ins Gelände über und hält Abstand zu kartierten Straßen, Gebäuden und Grünflächen. Der bisherige 16-mm-Beschriftungsstreifen entfällt vollständig; der 20 × 20 km große Landschaftsausschnitt bleibt erhalten.
+DejaVu Sans Bold, 28,8 × 7,5 mm Schriftbild in der Draufsicht; 0,48 mm in die ebene Fläche eingebettet und 0,64 mm erhaben. Der kräftigere Schriftschnitt und eine zusätzliche 0,16-mm-Höhenschicht betonen den Namen innerhalb der bisherigen Schriftfläche. Alle fünf Buchstaben stehen auf derselben waagerechten Ebene. Die rund 30 × 9 mm große Fläche geht über einen schmalen Rand ins Gelände über und hält Abstand zu kartierten OSM-Straßen, Gebäuden und Grünflächen. Die zusätzliche WorldCover-Grünfarbe wird auf dieser Schriftfläche ausgespart. Der bisherige 16-mm-Beschriftungsstreifen entfällt vollständig; der 20 × 20 km große Landschaftsausschnitt bleibt erhalten.
 
 </details>
 
@@ -102,15 +105,18 @@ DejaVu Sans, 7,5 mm Schriftbildhöhe in der Draufsicht; 0,48 mm in die ebene Fl�
 - **Durchgängige Höhen:** Die Kacheln S14W073 und S14W072 haben an der geprüften Naht keine Höhendifferenz; der Ausschnitt enthält keine Datenlücken. Eine leichte Gauß-Glättung mit rund 34 m Standardabweichung beruhigt das Raster.
 - **Erkennbare Stadtstrukturen:** 97.252 OSM-Gebäudegrundrisse werden zu druckbaren Häusergruppen zusammengefasst. Der Dachhöhenaufschlag beträgt jetzt 1,20 statt 0,95 mm, der Straßenaufschlag 0,32 statt 0,18 mm. Die Übergänge werden an gemeinsamen Rasterpunkten gemittelt. Straßenbreiten bleiben unverändert; dunklere, gedämpfte Farbtöne unterstützen die Erkennbarkeit.
 - **Kartierter Flughafen:** Startbahn 10/28, 18 Rollwegsegmente und zwei Vorfelder ergänzen den Flughafen Velasco Astete. Startbahn und Rollwege sind für die Düse auf rund 1,09 bzw. 0,54 mm verbreitert, mit 0,40 mm Höhenaufschlag. Sie nutzen die Straßenfarbe und benötigen keinen fünften AMS-Slot.
-- **Kartiertes Grün:** Grünflächen und Baumstandorte erscheinen als flache, integrierte Reliefbereiche, nicht als freistehende Miniaturbäume.
+- **Verbundenes Straßennetz:** 7.581 OSM-Straßensegmente einschließlich 119 zuvor ausgelassener Verbindungs- und Auffahrtssegmente. Die Rasterbereinigung ergänzt einzelne Kontaktzellen, statt ganze 2×2-Bereiche zu löschen. Sie erhält nachweislich alle Straßen-/Flughafenzellen und jede vorher bestehende Rasterverbindung. Aus 15 Rasterkomponenten werden neun; separat kartierte Wege bleiben möglich. Kleine Wege, Treppen und Servicegassen sind weiterhin nicht enthalten.
+- **Flächendeckendes Grün:** ESA WorldCover ergänzt die OSM-Grünflächen und Baumstandorte. Vegetation färbt die Geländeoberfläche ohne zusätzlichen Höhenaufschlag. Die braune ebene Schriftfläche bleibt bewusst ausgespart; sie ist keine Aussage über die dortige Landbedeckung.
 - **Stabiler Unterbau:** 4 mm Sockelbasis vor der 0,64 mm tiefen Einbettung der farbigen Oberflächen; ebene Unterseite und geschlossene Farbvolumen. Die Einbettung wurde um eine 0,16-mm-Schicht reduziert, ohne die äußere Modellform zu verändern.
 
-**Bewusste Vereinfachungen:** Horizontaler Maßstab 1:100.000, Höhen 1,6-fach überhöht. Gebäudehöhen sind schematisch. Kleine Gassen und Grundstücksgrenzen lassen sich nicht einzeln darstellen. Vegetationsdaten sind unvollständig: Braune Flächen bedeuten nicht automatisch vegetationslosen Boden. Dekoratives Modell, keine Vermessungsgrundlage.
+**Bewusste Vereinfachungen:** Horizontaler Maßstab 1:100.000, Höhen 1,6-fach überhöht. Gebäudehöhen sind schematisch. Kleine Gassen und Grundstücksgrenzen lassen sich nicht einzeln darstellen. Die Landbedeckung stammt aus 2021 und kann Klassifikationsfehler enthalten; alle Vegetationstypen teilen sich eine Farbe. Braune Flächen bedeuten nicht automatisch vegetationslosen Boden. Dekoratives Modell, keine Vermessungsgrundlage.
 
 ## Geprüft und nachvollziehbar
 
 Der [Prüfbericht](output/print_v2/validation.json) dokumentiert:
 
+- 119 ergänzte OSM-Verbindungssegmente, Erhalt aller Straßenrasterzellen und bestehender Straßenverbindungen bei der Kontaktbereinigung;
+- Landbedeckungsquelle, Prüfsumme, Klassenverteilung und lückenlose Datenabdeckung;
 - vier geschlossene Farbvolumen mit konsistenter Normalenausrichtung;
 - einen zusammenhängenden Körper nach boolescher Vereinigung;
 - numerisch vernachlässigbare Überschneidungen der Farbteile;
@@ -128,6 +134,12 @@ Die fertige 3MF liegt bereits im Repository. Für eigene Läufe wurden **Python 
 ```bash
 python3.12 -m venv .venv-model
 .venv-model/bin/python -m pip install -r requirements-print.txt
+
+# Optional: den bereits enthaltenen Landbedeckungsausschnitt erneut herunterladen
+.venv-model/bin/python prepare_landcover.py
+
+# Straßenkontakte und geografische Ausrichtung prüfen
+MPLCONFIGDIR=/tmp/cusco-mpl .venv-model/bin/python -m unittest test_map_raster.py
 
 # Gelände, Farbteile, neutrale 3MF und Geometrieprüfung
 MPLCONFIGDIR=/tmp/cusco-mpl .venv-model/bin/python build_print_model.py
@@ -168,7 +180,7 @@ Ein erneuter Modellbau ersetzt den Prüfbericht zunächst durch die reine Geomet
 | [`hero.png`](hero.png) | Hero-Rendering aus der tatsächlichen STL-Szene |
 | [`output/print_v2/Cusco_P1S_AMS.3mf`](output/print_v2/Cusco_P1S_AMS.3mf) | Empfohlenes Druckprojekt mit vier Farbzuordnungen |
 | [`output/print_v2/Druckhinweise.md`](output/print_v2/Druckhinweise.md) | Eigenständige Druckhinweise |
-| [`data/`](data/) | Lokale Höhen- und OSM-Quelldaten |
+| [`data/`](data/) | Lokale Höhen-, OSM- und Landbedeckungsdaten |
 | [`build_print_model.py`](build_print_model.py) | Modellgenerator und Mesh-Prüfungen |
 | [`render_print_model.py`](render_print_model.py) | Gesamtansicht und Beschriftungsdetail mit Cycles/CPU |
 | [`render_hero.py`](render_hero.py) | Breites Hero-Layout aus der gespeicherten Blender-Szene |
@@ -181,6 +193,7 @@ Aktuell ist ausschließlich die Modellfassung unter **`output/print_v2/`**. Ande
 - **Gelände:** [AWS Terrain Tiles / Mapzen](https://registry.opendata.aws/terrain-tiles/), SRTM-basierte Skadi-HGT-Kacheln mit etwa 30 m Quellraster; Abruf September 2026.
 - **Stadt und Vegetation:** © [OpenStreetMap-Mitwirkende](https://www.openstreetmap.org/copyright), [ODbL](https://opendatacommons.org/licenses/odbl/1-0/); Overpass-Abfragen vom 13. September 2026. Wege und einzelne Baumknoten sind enthalten; komplexe Multipolygon-Relationen wurden nicht zusätzlich abgefragt.
 - **Flughafen:** Ergänzende Overpass-Abfrage vom 24. September 2026, Server-Datenstand **15. Juli 2026**. Geometrien, Quellzeitstempel und Abfrage sind in `data/cusco_airport.json` gespeichert; gleiche OSM-Lizenz.
-- **Schrift:** DejaVu Sans.
+- **Landbedeckung:** [Zanaga et al. (2022), ESA WorldCover 10 m 2021 v200](https://doi.org/10.5281/zenodo.7254221), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). © ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium. Ausschnitt aus S15W075 und S15W072; Quellen und Prüfsummen in `data/cusco_worldcover_2021.json`.
+- **Schrift:** DejaVu Sans Bold.
 
 Ein unabhängiges Modellprojekt, nicht von Bambu Lab herausgegeben.

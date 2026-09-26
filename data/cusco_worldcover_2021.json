@@ -1,0 +1,49 @@
+{
+  "dataset": "ESA WorldCover 10 m 2021 v200",
+  "doi": "https://doi.org/10.5281/zenodo.7254221",
+  "license": "CC BY 4.0",
+  "attribution": "\u00a9 ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium",
+  "sources": [
+    {
+      "tile": "S15W075",
+      "url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_S15W075_Map.tif",
+      "sha256": "9c3815976a2d57bcfc83882f6d2c2ebcf1efa274cb989df5d25641e6cb026229"
+    },
+    {
+      "tile": "S15W072",
+      "url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_S15W072_Map.tif",
+      "sha256": "7363f78f2d85e1553e24a8f6902e01008eb8173c50f955edbc5800b06e99755c"
+    }
+  ],
+  "requested_bounds_wsen": [
+    -72.05985607005947,
+    -13.621781117499102,
+    -71.87506392994055,
+    -13.4421188825009
+  ],
+  "crop_sha256": "b1de0fbf7243d86bc2ab64408d7ed699387dd1963fcf6ded1fe795daf512e491",
+  "processing": "Lossless spatial crop and mosaic; categorical mode resampling occurs during model build.",
+  "classes": {
+    "10": "Tree cover",
+    "20": "Shrubland",
+    "30": "Grassland",
+    "40": "Cropland",
+    "50": "Built-up",
+    "60": "Bare / sparse vegetation",
+    "70": "Snow and ice",
+    "80": "Permanent water",
+    "90": "Herbaceous wetland",
+    "95": "Mangroves",
+    "100": "Moss and lichen"
+  },
+  "green_classes": [
+    10,
+    20,
+    30,
+    40,
+    90,
+    95,
+    100
+  ],
+  "limitations": "2021 land cover, not current or seasonal colours. All vegetation classes share one green filament; other classes use the terrain colour. OSM buildings, roads and airport take precedence."
+}

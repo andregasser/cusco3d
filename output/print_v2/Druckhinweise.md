@@ -30,14 +30,24 @@ sie sind über `.gitignore` ausgeschlossen.
 - Flughafen mit kartierter Startbahn 10/28, 18 Rollwegsegmenten und zwei
   Vorfeldern. Startbahn rund 1,09 mm breit, Rollwege rund 0,54 mm,
   Höhenaufschlag 0,40 mm; gleiche Farbe wie Straßen.
-- Kartierte Grünflächen und Baumstandorte als flache grüne Reliefbereiche,
-  ohne schwebende Baumkegel. OSM-Vegetationsdaten sind unvollständig;
-  braune Flächen bedeuten nicht zwingend vegetationslosen Boden.
-- Schrift exakt **„Cusco“**. DejaVu Sans, 7,5 mm Schriftbildhöhe,
+- 119 zusätzliche OSM-Verbindungs- und Auffahrtssegmente; insgesamt 7.581
+  Straßensegmente. Die Kontaktbereinigung erhält alle Straßen-/Flughafenzellen
+  und jede vorhandene Rasterverbindung, statt Straßenstücke zu löschen.
+- ESA WorldCover 2021 v200 (10 m) ergänzt die OSM-Grünflächen flächendeckend.
+  Wald, Grasland, Buschland und Ackerflächen teilen sich den Grünton; Straßen,
+  Flughafen und Gebäude haben Vorrang. Etwa 72 % der Draufsicht sind grün.
+  Vegetation ist jetzt reine Oberflächenfarbe ohne zusätzlichen Höhenaufschlag.
+  Die Daten stammen aus 2021 und bilden keine jahreszeitlichen Farben ab.
+  Braun bleibt die Grundfarbe für Sockel, Schriftfläche und übrige Flächen,
+  einschließlich der wenigen Wasserzellen; es bedeutet nicht zwingend kahlen Boden.
+- Schrift exakt **„Cusco“**. DejaVu Sans Bold, 28,8 × 7,5 mm Schriftbild,
   waagerecht auf einer etwa 30 × 9 mm großen ebenen Fläche vorne links,
-  vollständig innerhalb der Modellkante. 0,48 mm erhaben und 0,48 mm eingebettet.
-  Alle fünf Buchstaben stehen auf gleicher Höhe in einem kartografisch freien
-  Bereich. Ein schmaler Rand verbindet die ebene Fläche mit dem Gelände.
+  vollständig innerhalb der Modellkante. 0,64 mm erhaben und 0,48 mm eingebettet.
+  Kräftigerer Schriftschnitt und eine zusätzliche 0,16-mm-Höhenschicht betonen
+  den Namen bei nahezu unveränderter Schriftbreite.
+  Alle fünf Buchstaben stehen auf gleicher Höhe in einem Bereich ohne
+  kartierte OSM-Merkmale. Die WorldCover-Grünfarbe wird dort ausgespart.
+  Ein schmaler Rand verbindet die ebene Fläche mit dem Gelände.
 
 ## Vier AMS-Farben
 
@@ -70,23 +80,25 @@ passende Filamentprofile wählen und erneut slicen. Der Spülturm benötigt
 seitlich Platz; die native Projektdatei enthält die geprüfte Anordnung.
 
 Der vollständige Probeschnitt mit Bambu Studio 2.8.2.61 endete erfolgreich,
-ohne Warnmeldung im Plattenergebnis: 150 Druckschichten, 316 Filamentwechsel,
-ca. 23 h 00 min und 297 g PLA einschließlich Spülabfall. Das sind Schätzungen
+ohne Warnmeldung im Plattenergebnis: 150 Druckschichten, 349 Filamentwechsel,
+ca. 25 h 12 min und 308 g PLA einschließlich Spülabfall. Das sind Schätzungen
 des mitgelieferten Profils; andere Filamente und Einstellungen verändern sie.
 Die vier Teile wurden ohne Mesh-Reparaturen importiert. Ein physischer
 Probedruck wurde nicht durchgeführt.
 
 ## Druckzeit und sichtbare Qualität
 
-Gegenüber der Fassung mit vorderem Schriftstreifen (23 h 19 min 13 s,
-306,35 g) spart die aktuelle Fassung mit ebener Schriftfläche innerhalb des
-Modells **19 Minuten und 9,2 g PLA**: 23 h 00 min 13 s und 297,17 g.
-Gegenüber dem ursprünglichen Projekt (23 h 56 min 47 s) sind es insgesamt
-56 min 34 s. `print_time_comparison.json` enthält alle sechs Vergleichsvarianten.
+Die aktuelle Fassung mit zusätzlichen Straßenverbindungen und WorldCover-
+Vegetation benötigt geschätzt **25 h 12 min 02 s und 307,96 g PLA**. Gegenüber
+der letzten Fassung (23 h 01 min 38 s, 297,19 g) sind das **2 h 10 min und
+10,8 g mehr**. Die vollständigere Farbverteilung verursacht mehr Farbwechsel
+und Druckaufwand. Gegenüber dem ursprünglichen Projekt (23 h 56 min 47 s)
+ist die neue Fassung etwa 1 h 15 min langsamer. Die inneren Druckoptimierungen
+bleiben aktiviert. `print_time_comparison.json` enthält alle acht Varianten.
 
-Der 16-mm-Schriftstreifen entfällt vollständig. Der ursprüngliche Rasterausschnitt
-für Straßen, Flughafen, Gebäude und Vegetation sowie die Gebäudehöhen bleiben
-erhalten. Nur an der neuen Vorderkante wird das Geländeraster angeschnitten.
+Der 16-mm-Schriftstreifen entfällt vollständig. Der ursprüngliche Landschaftsausschnitt
+bleibt erhalten. Die Straßenkontakte und die Vegetationsverteilung wurden
+überarbeitet; Gebäudehöhen bleiben schematisch. Nur an der neuen Vorderkante wird das Geländeraster angeschnitten.
 Für die Schrift ist eine kleine freie Geländeoberfläche innerhalb des Modells
 eingeebnet; die Buchstaben stehen waagerecht und leicht erhaben darauf.
 
@@ -98,7 +110,7 @@ bleiben dabei gleich. Deckendes PLA verwenden: Mischfarben im Inneren können
 bei durchscheinenden Filamenten sichtbar werden. Die Farbdurchdeckung der
 neuen Einbettung ist physisch noch nicht geprüft.
 
-316 Farbwechsel und rund 7½ Stunden Spülzeit begrenzen die Ersparnis.
+349 Farbwechsel und rund 8 h 11 min Spülzeit begrenzen die Ersparnis.
 Eine drastisch kürzere Druckzeit bei gleicher Vierfarb-Darstellung ist mit
 diesen Tests nicht belegt. Gröbere Schichten oder weniger Farben ändern die
 sichtbare Qualität. Spülmengen wurden nicht manuell reduziert.
@@ -109,8 +121,11 @@ sichtbare Qualität. Spülmengen wurden nicht manuell reduziert.
 Farbvolumen, Normalenausrichtung, Schnittvolumen, Zusammenhalt und horizontale
 Schnitte in 0,16-mm-Abständen. Numerische Nullvolumen-Artefakte der booleschen
 Vereinigung werden aus der Einfarb-Version entfernt.
+Zusätzlich werden die Landbedeckungsquelle samt Prüfsumme und Klassenanteilen
+sowie der Erhalt der Straßenrasterzellen und Straßenverbindungen geprüft.
 
 ```bash
+MPLCONFIGDIR=/tmp/cusco-mpl .venv-model/bin/python -m unittest test_map_raster.py
 MPLCONFIGDIR=/tmp/cusco-mpl .venv-model/bin/python build_print_model.py
 blender -b --factory-startup -t 8 --python render_print_model.py
 ```
@@ -120,8 +135,8 @@ exakt diese vier STL-Dateien in Blender und rendert mit Cycles/CPU. Die PNGs
 sind echte Mesh-Renderings; Beleuchtung verändert den Farbeindruck. Sie zeigen
 die Form, nicht die Extrusionsbahnen. Die Szene liegt als `Cusco_Render.blend` vor.
 
-Python benötigt numpy, scipy, shapely, trimesh, manifold3d, pillow, mapbox-earcut
-und matplotlib. Diese sind in `.venv-model` installiert.
+Python benötigt numpy, scipy, shapely, trimesh, manifold3d, pillow, mapbox-earcut,
+matplotlib und rasterio (Versionen in `requirements-print.txt`). Diese sind in `.venv-model` installiert.
 
 ## Daten und Attribution
 
@@ -134,4 +149,10 @@ komplexe Multipolygon-Relationen wurden nicht zusätzlich abgefragt.
 Flughafengeometrien: ergänzende Overpass-Abfrage vom 24. September 2026,
 Server-Datenstand 15. Juli 2026; Abfrage und Geometrien in
 `data/cusco_airport.json`, ebenfalls ODbL.
-Schrift: DejaVu Sans. Dekoratives Modell, keine Vermessungsgrundlage.
+Landbedeckung: [Zanaga et al. (2022), ESA WorldCover 10 m 2021 v200](https://doi.org/10.5281/zenodo.7254221),
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+© ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium.
+Die Kacheln S15W075 und S15W072 wurden auf den Modellausschnitt zugeschnitten;
+Quellen und Prüfsummen stehen in `data/cusco_worldcover_2021.json`.
+`prepare_landcover.py` reproduziert den Ausschnitt.
+Schrift: DejaVu Sans Bold. Dekoratives Modell, keine Vermessungsgrundlage.
