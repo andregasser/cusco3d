@@ -87,6 +87,16 @@ Die Schätzungen stammen aus dem Probeschnitt mit **Bambu Studio 2.8.2.61**: 150
 
 Die vollständigere Vegetationsverteilung und die überarbeiteten Straßen erhöhen den geschätzten Aufwand gegenüber der letzten Fassung um **2 h 10 min und 10,8 g PLA**. Die neue Fassung ist damit auch rund **1 h 15 min langsamer als das ursprüngliche Modell**. Die inneren Druckoptimierungen bleiben aktiviert, gleichen den Mehraufwand der neuen Farbverteilung aber nicht aus. Der Landschaftsausschnitt und die ebene Schriftfläche bleiben erhalten. Alle acht Vergleichsergebnisse stehen in [print_time_comparison.json](output/print_v2/print_time_comparison.json).
 
+Ein weiterer Optimierungsversuch am 26. September brachte keinen sinnvollen Zeitgewinn:
+
+| Geprüfte Variante | Druckzeit | PLA | Entscheidung |
+| --- | --- | --- | --- |
+| Bestehende Fassung | **25 h 12 min 02 s** | **308 g** | Beibehalten |
+| Unsichtbarer grüner Kern, Außenflächen unverändert | 25 h 22 min 08 s | 304 g | Langsamer, verworfen |
+| Innere Füllbahnen 0,60 statt 0,45 mm | 25 h 10 min 43 s | 312 g | Nur 79 s schneller, aber 4,3 g mehr; verworfen |
+
+Die Farbreihenfolge erreicht für die vorhandenen Schichtfarben bereits das rechnerische Minimum aus 349 Wechseln und der unveränderten Spülmatrix. Füllschichten sind bereits kombiniert und Spülen in die Füllung ist aktiv. Das bisherige Profil und die Druckdatei bleiben deshalb unverändert. Die zusätzlichen Versuche stehen separat in `optimization_trials_2026_09_26` im Vergleichsbericht; sie wurden nicht als neue Modellfassungen übernommen.
+
 Die sichtbare Auflösung bleibt bei **0,16 mm**, mit drei Wänden, 12 % Gyroid und unveränderten Oberflächengeschwindigkeiten. Kombinierte Füllschichten betreffen das Innere; beim Spülen in die Füllung ist deckendes PLA erforderlich, damit Mischfarben nicht durchscheinen. Diese Funktionsweise beschreibt auch [Bambu Studio](https://raw.githubusercontent.com/bambulab/BambuStudio/master/src/libslic3r/PrintConfig.cpp).
 
 Die 349 Farbwechsel und rund 8 h 11 min Spülzeit bleiben der große Aufwand. Gröbere Schichten oder weniger Farben wären sichtbare Kompromisse. Ein physischer Probedruck zur Bestätigung von Farbdurchdeckung, Haftung und Oberfläche steht noch aus.

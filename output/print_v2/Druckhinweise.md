@@ -96,6 +96,21 @@ und Druckaufwand. Gegenüber dem ursprünglichen Projekt (23 h 56 min 47 s)
 ist die neue Fassung etwa 1 h 15 min langsamer. Die inneren Druckoptimierungen
 bleiben aktiviert. `print_time_comparison.json` enthält alle acht Varianten.
 
+Zusätzliche Probeschnitte vom 26. September 2026 wurden **nicht übernommen**:
+
+- Ein grüner innerer Kern bei geschützten braunen Außenflächen benötigt
+  25 h 22 min 08 s und 304,03 g: rund zehn Minuten langsamer. Die sichtbaren
+  Flächen waren bei 17.486 Prüfpunkten aus sechs Richtungen identisch.
+- 0,60 statt 0,45 mm breite innere Füllbahnen benötigen 25 h 10 min 43 s
+  und 312,25 g: lediglich 79 Sekunden schneller, aber 4,3 g mehr Filament.
+- Für die vorhandenen Farben je Schicht erreicht die automatische Reihenfolge
+  bereits das Minimum aus Wechselzahl und unveränderter Spülmatrix.
+
+Das ausgelieferte Profil behält **0,45 mm Füllbahnbreite** und die bisherige
+Materialaufteilung im Inneren. Die vollständigen Ergebnisse sind im Abschnitt
+`optimization_trials_2026_09_26` der `print_time_comparison.json` dokumentiert.
+Ein großer Zeitgewinn ohne sichtbare Änderungen ist damit nicht belegt.
+
 Der 16-mm-Schriftstreifen entfällt vollständig. Der ursprüngliche Landschaftsausschnitt
 bleibt erhalten. Die Straßenkontakte und die Vegetationsverteilung wurden
 überarbeitet; Gebäudehöhen bleiben schematisch. Nur an der neuen Vorderkante wird das Geländeraster angeschnitten.
