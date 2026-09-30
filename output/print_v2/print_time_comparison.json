@@ -1,9 +1,9 @@
 {
-  "measured_date": "2026-09-26",
+  "measured_date": "2026-09-30",
   "slicer_version": "02.08.02.61",
-  "note": "Slicer estimates, not physical prints. Final variant adds 119 OSM road-link segments, preserves road connectivity in raster contact repair, and colours vegetation from ESA WorldCover 2021 v200 plus OSM. Vegetation has no additional height offset. The 200 x 200 mm footprint, flat bold lettering and print profile are unchanged. The new colour distribution increases time and material despite the existing internal print optimizations. Earlier seven variants retain their original September 22/24 measurements; final variant measured September 26, 2026.",
+  "note": "Slicer estimates, not physical prints. Final variant combines OSM and Microsoft footprints, a finer feature raster, flat building roofs and protected minor-road cores. Includes the embedded location pin. Core four-colour print settings are unchanged; automatic tree-support generation is enabled, with no support toolpaths produced in the validated slice. Earlier measurements and optimization trials are historical; the intermediate dense OSM preview was not a validated print benchmark.",
   "original_project_sha256": "27372b7c9f1c5296115b0f1c7abd66a86e13276b4a85fcca37f8a5c9ec8c9de5",
-  "final_project_sha256": "cc6c15599fc074641de303d519f7c35623b16636cc610eb2b74ed2b2f0292c0f",
+  "final_project_sha256": "997374b45a6b15db749a60c761668c08d83c0ce706171a5518434aa3868c7369",
   "unchanged_settings": {
     "layer_height_mm": 0.16,
     "wall_loops": 3,
@@ -15,8 +15,8 @@
     "outer_wall_speed_mm_s": 60,
     "top_surface_speed_mm_s": 70
   },
-  "net_time_saved_seconds": -4515.3984375,
-  "net_time_saved_percent": -5.237821725327172,
+  "net_time_saved_seconds": -19075.59375,
+  "net_time_saved_percent": -22.12751781492488,
   "physical_print_verified": false,
   "measurements": [
     {
@@ -1040,9 +1040,303 @@
         "note": "Land-cover classes, not seasonal or satellite RGB colours.",
         "label_patch_green_cells_excluded": 4601
       }
+    },
+    {
+      "name": "worldcover_with_location_pin",
+      "measured_date": "2026-09-30",
+      "total_estimated_seconds": 90831.3828125,
+      "total_filament_g": 308.02734565734863,
+      "filament_changes": 349,
+      "inlay_depth_mm": 0.64,
+      "flush_into_infill": true,
+      "infill_combination": true,
+      "location_pin": {
+        "latitude": -13.521908269187426,
+        "longitude": -71.98500062613564,
+        "coordinate_system": "WGS84 latitude/longitude; existing model projection",
+        "center_xy_mm": [
+          81.01583095000956,
+          111.17845474055818
+        ],
+        "surface_reference_z_mm": 8.864980942628387,
+        "height_above_local_surface_max_mm": 5.0,
+        "shaft_diameter_mm": 1.8,
+        "head_diameter_mm": 3.2,
+        "shoulder_angle_degrees": 45,
+        "embedded_bottom_z_mm": 6.106677571269662,
+        "material": "03_Gebaeude",
+        "color": "#AC5438",
+        "bounds": [
+          79.41583095000956,
+          109.57845474055819,
+          6.106677571269662,
+          82.61583095000955,
+          112.77845474055817,
+          13.864980942628387
+        ],
+        "embedded_volume_mm3": 5.621689904002947
+      },
+      "gcode_header": [
+        "; HEADER_BLOCK_START",
+        "; BambuStudio 02.08.02.61",
+        "; model printing time: 1d 1h 7m 20s; total estimated time: 1d 1h 13m 51s",
+        "; total layer number: 150",
+        "; total filament length [mm] : 61301.49,14094.31,8396.00,19484.72",
+        "; total filament volume [cm^3] : 147447.37,33900.78,20194.75,46866.24",
+        "; total filament weight [g] : 182.83,42.04,25.04,58.11",
+        "; filament_density: 1.24,1.24,1.24,1.24",
+        "; filament_diameter: 1.75,1.75,1.75,1.75",
+        "; max_z_height: 24.20",
+        "; filament: 1,2,3,4",
+        "; support_material_on_wipe_tower: 0",
+        "; HEADER_BLOCK_END",
+        ""
+      ],
+      "slice_result": {
+        "error_string": "Success.",
+        "export_time": 16214,
+        "layer_height": 0.1599999964237213,
+        "plate_index": 1,
+        "prepare_time": 7447,
+        "return_code": 0,
+        "sliced_plates": [
+          {
+            "feature_type_times": {
+              "Bottom surface": 930.4010620117188,
+              "Bridge": 1140.18212890625,
+              "Custom": 376.9421691894531,
+              "Flush": 29467.798828125,
+              "Gap infill": 17.882200241088867,
+              "Inner wall": 6713.68798828125,
+              "Internal solid infill": 4709.0,
+              "Outer wall": 18956.880859375,
+              "Prime tower": 4165.0986328125,
+              "Sparse infill": 4386.8076171875,
+              "Top surface": 46.21727752685547,
+              "Travel": 20312.91796875,
+              "Undefined": 20298.064453125
+            },
+            "filament_change_times": 349,
+            "filaments": [
+              {
+                "filament_id": "GFL99",
+                "id": 1,
+                "main_used_g": 151.38963317871094,
+                "total_used_g": 182.83474731445312
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 2,
+                "main_used_g": 10.388457298278809,
+                "total_used_g": 42.036964416503906
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 3,
+                "main_used_g": 3.388749837875366,
+                "total_used_g": 25.041494369506836
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 4,
+                "main_used_g": 22.815073013305664,
+                "total_used_g": 58.114139556884766
+              }
+            ],
+            "generate_support_material_time": 5571,
+            "id": 1,
+            "infill_time": 61384,
+            "layer_filament_change": 0,
+            "main_predication": 56807.421875,
+            "make_perimeters_time": 116328,
+            "obj_cached_cnt": 0,
+            "objects": [
+              {
+                "bbox": {
+                  "depth": 200.0,
+                  "height": 24.23443031311035,
+                  "width": 200.0,
+                  "x": 19.0,
+                  "y": 28.0,
+                  "z": 0.0
+                },
+                "id": 5,
+                "name": "Cusco",
+                "triangle_count": 3534962
+              }
+            ],
+            "sliced_time": 222171,
+            "sliced_time_with_cache": 35535,
+            "total_predication": 90831.3828125,
+            "triangle_count": 3534962,
+            "warning_message": ""
+          }
+        ],
+        "sparse_infill_density": 12.0,
+        "wall_loops": 3
+      }
+    },
+    {
+      "name": "complete_city_microsoft_buildings",
+      "measured_date": "2026-09-30",
+      "total_estimated_seconds": 105283.15625,
+      "total_filament_g": 317.62244415283203,
+      "filament_changes": 353,
+      "inlay_depth_mm": 0.64,
+      "flush_into_infill": true,
+      "infill_combination": true,
+      "automatic_support_detection_enabled": true,
+      "generated_support_features": [],
+      "location_pin": {
+        "latitude": -13.521908269187426,
+        "longitude": -71.98500062613564,
+        "coordinate_system": "WGS84 latitude/longitude; existing model projection",
+        "center_xy_mm": [
+          81.01583095000956,
+          111.17845474055818
+        ],
+        "surface_reference_z_mm": 9.29894230441367,
+        "height_above_local_surface_max_mm": 5.0,
+        "shaft_diameter_mm": 1.8,
+        "head_diameter_mm": 3.2,
+        "shoulder_angle_degrees": 45,
+        "embedded_bottom_z_mm": 6.118047965734325,
+        "material": "03_Gebaeude",
+        "color": "#AC5438",
+        "bounds": [
+          79.41583095000956,
+          109.57845474055819,
+          6.118047965734325,
+          82.61583095000955,
+          112.77845474055817,
+          14.29894230441367
+        ],
+        "embedded_volume_mm3": 6.71759478800887
+      },
+      "building_density": {
+        "source_raster_area_mm2": 4233.979723094372,
+        "supplemental_new_raster_area_mm2": 1758.4226614475995,
+        "source_raster_area_overwritten_by_roads_percent": 46.861300992282246,
+        "final_building_area_mm2": 3642.174857190279,
+        "final_building_components": 4938,
+        "road_width_mm_by_class": {
+          "motorway": 0.5449591280653951,
+          "trunk": 0.5449591280653951,
+          "primary": 0.5449591280653951,
+          "secondary": 0.5449591280653951,
+          "tertiary": 0.5449591280653951,
+          "residential": 0.40871934604904636,
+          "living_street": 0.40871934604904636,
+          "unclassified": 0.40871934604904636,
+          "motorway_link": 0.40871934604904636,
+          "trunk_link": 0.40871934604904636,
+          "primary_link": 0.40871934604904636,
+          "secondary_link": 0.40871934604904636,
+          "tertiary_link": 0.40871934604904636
+        }
+      },
+      "slice_result": {
+        "error_string": "Success.",
+        "export_time": 21986,
+        "layer_height": 0.1599999964237213,
+        "plate_index": 1,
+        "prepare_time": 9748,
+        "return_code": 0,
+        "sliced_plates": [
+          {
+            "feature_type_times": {
+              "Bottom surface": 930.4010620117188,
+              "Bridge": 1369.275390625,
+              "Custom": 376.9425354003906,
+              "Flush": 29798.98046875,
+              "Gap infill": 16.428110122680664,
+              "Inner wall": 6181.97705078125,
+              "Internal solid infill": 4941.42724609375,
+              "Outer wall": 27274.55859375,
+              "Prime tower": 4194.47900390625,
+              "Sparse infill": 4383.97900390625,
+              "Top surface": 39.820159912109375,
+              "Travel": 27111.03515625,
+              "Undefined": 27096.181640625
+            },
+            "filament_change_times": 353,
+            "filaments": [
+              {
+                "filament_id": "GFL99",
+                "id": 1,
+                "main_used_g": 154.18905639648438,
+                "total_used_g": 185.57154846191406
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 2,
+                "main_used_g": 7.279582500457764,
+                "total_used_g": 39.58693313598633
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 3,
+                "main_used_g": 11.30598258972168,
+                "total_used_g": 33.29356002807617
+              },
+              {
+                "filament_id": "GFL99",
+                "id": 4,
+                "main_used_g": 23.65060043334961,
+                "total_used_g": 59.17040252685547
+              }
+            ],
+            "generate_support_material_time": 24866,
+            "id": 1,
+            "infill_time": 49129,
+            "layer_filament_change": 0,
+            "main_predication": 70898.640625,
+            "make_perimeters_time": 147844,
+            "obj_cached_cnt": 0,
+            "objects": [
+              {
+                "bbox": {
+                  "depth": 200.0,
+                  "height": 24.527498245239258,
+                  "width": 200.0,
+                  "x": 19.0,
+                  "y": 28.0,
+                  "z": 0.0
+                },
+                "id": 5,
+                "name": "Cusco",
+                "triangle_count": 5275004
+              }
+            ],
+            "sliced_time": 270648,
+            "sliced_time_with_cache": 45098,
+            "total_predication": 105283.15625,
+            "triangle_count": 5275004,
+            "warning_message": ""
+          }
+        ],
+        "sparse_infill_density": 12.0,
+        "wall_loops": 3
+      },
+      "gcode_header": [
+        "; HEADER_BLOCK_START",
+        "; BambuStudio 02.08.02.61",
+        "; model printing time: 1d 5h 8m 12s; total estimated time: 1d 5h 14m 43s",
+        "; total layer number: 153",
+        "; total filament length [mm] : 62219.10,13272.85,11162.79,19838.87",
+        "; total filament volume [cm^3] : 149654.47,31924.95,26849.64,47718.07",
+        "; total filament weight [g] : 185.57,39.59,33.29,59.17",
+        "; filament_density: 1.24,1.24,1.24,1.24",
+        "; filament_diameter: 1.75,1.75,1.75,1.75",
+        "; max_z_height: 24.52",
+        "; filament: 1,2,3,4",
+        "; support_material_on_wipe_tower: 0",
+        "; HEADER_BLOCK_END",
+        ""
+      ]
     }
   ],
-  "previous_project_sha256": "6abc98afa72c342349a990f6b0a170fb52076b82002b4a2aa59d451610c9aa6c",
+  "previous_project_sha256": "ad7006ad427afead90da6a2d9c231d156e511ae3144dcb9544bbb9dbc5e152dd",
   "terrain_following_label_savings": {
     "relative_to": "refined_with_front_label_strip",
     "seconds": 977.671875,
@@ -1340,5 +1634,15 @@
         }
       }
     ]
+  },
+  "location_pin_change_vs_previous": {
+    "additional_seconds": 108.421875,
+    "additional_filament_g": 0.06528663635253906,
+    "additional_filament_changes": 0
+  },
+  "complete_city_change_vs_previous_pin": {
+    "additional_seconds": 14451.7734375,
+    "additional_filament_g": 9.595098495483398,
+    "additional_filament_changes": 4
   }
 }

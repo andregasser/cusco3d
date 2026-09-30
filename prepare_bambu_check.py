@@ -22,7 +22,8 @@ process=resolve('0.16mm Optimal @BBL X1C')
 process.update({'name':'Cusco 0.16mm P1S','wall_loops':'3','wall_generator':'arachne','sparse_infill_density':'12%',
     'sparse_infill_pattern':'gyroid','top_shell_layers':'5','bottom_shell_layers':'4',
     'flush_into_infill':'1','infill_combination':'1',
-    'enable_support':'0','brim_type':'no_brim','prime_tower_width':'25',
+    'enable_support':'1','support_type':'tree(auto)','support_on_build_plate_only':'0',
+    'brim_type':'no_brim','prime_tower_width':'25',
     'prime_tower_brim_width':'1','prime_tower_rib_wall':'0','prime_tower_rib_width':'0',
     'wipe_tower_x':['226'],'wipe_tower_y':['110'],
     'outer_wall_speed':['60','60'],'top_surface_speed':['70','70']})

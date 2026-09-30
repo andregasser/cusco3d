@@ -25,9 +25,53 @@
       3198.6286350289997,
       4429.555632288955
     ],
-    "gaussian_sigma_ground_m": 34.059945504087196,
+    "gaussian_sigma_ground_m": 34.05994550408719,
     "vertical_exaggeration": 1.6,
     "max_adjacent_elevation_change_m": 53.74650645673182
+  },
+  "terrain_refinement": {
+    "factor": 2,
+    "original_triangle_surface_preserved": true,
+    "feature_cell_mm": [
+      0.1362397820163488,
+      0.13705583756345177
+    ],
+    "mesh_simplification_tolerance_mm": 0.0
+  },
+  "supplemental_buildings": {
+    "dataset": "Microsoft Global ML Building Footprints",
+    "release": "2026-08-13",
+    "tile_quadkey": "210031023",
+    "url": "https://bfppub.z5.web.core.windows.net/2026-08-13/global-buildings.geojsonl/RegionName=Peru/quadkey=210031023/part-00142-110f5303-ff85-4c71-a2bf-c6070024fec8.c000.csv.gz",
+    "license": "CDLA-Permissive-2.0",
+    "source_sha256": "485dc8f600cb0eef52a717a7ad3ad88c3fcc08c9e8d7604bce136e1528b02d09",
+    "crop_sha256": "6c5c93c55ba2e42877ec77eef1855329b4cf259a9430fbcb5bfdf3f6c954cbed",
+    "osm_sha256": "bf3ef798cd9f459011ec86cee118a4057408f7dbb87fd7d790d79c6a97f1df90",
+    "crop_lon_lat": [
+      -72.05985607005947,
+      -13.621781117499102,
+      -71.87506392994055,
+      -13.4421188825009
+    ],
+    "counts": {
+      "tile_features": 236643,
+      "intersecting_crop": 103394,
+      "duplicates_rejected": 21874,
+      "small_or_low_confidence_rejected": 76,
+      "accepted": 81444,
+      "accepted_unknown_confidence": 81444
+    },
+    "filter": "At least 12 m\u00b2; confidence >= 0.65 when supplied; unknown (-1) retained. Reject >=50% area overlap with OSM; residual overlap unioned in raster.",
+    "note": "ML-derived footprints may contain omissions and false positives. Unknown confidence is not a high-confidence claim. Accepted polygons are additions to OSM, not a count of newly discovered individual houses. Heights are not used.",
+    "label_patch_cells_excluded": 1
+  },
+  "building_grouping": {
+    "minimum_component_area_mm2": 0.16,
+    "small_remnant_cells_before_rescue": 15267,
+    "cells_added_to_rescue_remnants": 18048,
+    "unprintable_cells_removed": 9614,
+    "max_growth_from_mapped_footprints_mm": 0.5449591280653951,
+    "road_cells_overwritten": 0
   },
   "landcover": {
     "dataset": "ESA WorldCover 2021 v200",
@@ -35,14 +79,14 @@
     "source_sha256": "b1de0fbf7243d86bc2ab64408d7ed699387dd1963fcf6ded1fe795daf512e491",
     "resampling": "mode, then north-up rows reversed into south-to-north mesh",
     "class_cells": {
-      "10": 57932,
-      "20": 897,
-      "30": 361661,
-      "40": 51623,
-      "50": 61679,
-      "60": 1246,
-      "80": 37,
-      "90": 11
+      "10": 233750,
+      "20": 3957,
+      "30": 1442068,
+      "40": 208544,
+      "50": 247339,
+      "60": 5905,
+      "80": 192,
+      "90": 57
     },
     "green_classes": [
       10,
@@ -56,17 +100,21 @@
     "unclassified_interior_cells": 0,
     "vegetation_rise_mm": 0,
     "note": "Land-cover classes, not seasonal or satellite RGB colours.",
-    "label_patch_green_cells_excluded": 4601
+    "label_patch_green_cells_excluded": 18091
   },
   "road_topology": {
-    "source_road_airport_cells": 110758,
+    "source_road_airport_cells": 295283,
     "source_cells_removed": 0,
-    "components_before": 15,
-    "components_after": 9,
+    "components_before": 45,
+    "components_after": 14,
     "existing_components_preserved": true,
-    "repair_iterations": 3,
-    "cells_reassigned": 904,
-    "road_cells_added": 861
+    "repair_iterations": 2,
+    "cells_reassigned": 2213,
+    "road_cells_added": 1997,
+    "major_roads_and_airport_preserved": true,
+    "minor_road_cells_yielded_to_buildings": 43649,
+    "minor_road_core_width_mm": 0.2724795640326976,
+    "note": "Minor-road shoulders yield to buildings; a two-cell mapped core remains. All main-road and airport cells remain protected."
   },
   "osm": {
     "roads": 7581,
@@ -85,14 +133,36 @@
     "building_roof_offset": 1.2,
     "road_offset": 0.32,
     "airport_offset": 0.4,
-    "note": "Cell targets blended at shared mesh vertices; roof offset above block maximum."
+    "note": "Buildings have horizontal roofs and vertical walls; only road relief is blended."
   },
-  "airport_cells": 647,
+  "building_density": {
+    "source_raster_area_mm2": 4233.979723094372,
+    "supplemental_new_raster_area_mm2": 1758.4226614475995,
+    "source_raster_area_overwritten_by_roads_percent": 46.861300992282246,
+    "final_building_area_mm2": 3642.174857190279,
+    "final_building_components": 4938,
+    "road_width_mm_by_class": {
+      "motorway": 0.5449591280653951,
+      "trunk": 0.5449591280653951,
+      "primary": 0.5449591280653951,
+      "secondary": 0.5449591280653951,
+      "tertiary": 0.5449591280653951,
+      "residential": 0.40871934604904636,
+      "living_street": 0.40871934604904636,
+      "unclassified": 0.40871934604904636,
+      "motorway_link": 0.40871934604904636,
+      "trunk_link": 0.40871934604904636,
+      "primary_link": 0.40871934604904636,
+      "secondary_link": 0.40871934604904636,
+      "tertiary_link": 0.40871934604904636
+    }
+  },
+  "airport_cells": 2668,
   "material_cells": [
-    13860,
-    111619,
-    23623,
-    386718
+    42002,
+    297280,
+    195056,
+    1608942
   ],
   "cropped_front_margin_mm": 16.0,
   "interior_sampling_preserved": true,
@@ -108,6 +178,12 @@
     "planarity_error_mm": 0.0,
     "inside_model": true,
     "mapped_features_covered": 0
+  },
+  "building_roofs": {
+    "components": 4938,
+    "flat_roof_max_error_mm": 0.0,
+    "wall_orientation": "vertical",
+    "minimum_rise_above_block_mm": 1.2
   },
   "lettering": {
     "text": "Cusco",
@@ -131,54 +207,87 @@
       16.15999984741211
     ]
   },
+  "location_pin": {
+    "latitude": -13.521908269187426,
+    "longitude": -71.98500062613564,
+    "coordinate_system": "WGS84 latitude/longitude; existing model projection",
+    "center_xy_mm": [
+      81.01583095000956,
+      111.17845474055818
+    ],
+    "surface_reference_z_mm": 9.29894230441367,
+    "height_above_local_surface_max_mm": 5.0,
+    "shaft_diameter_mm": 1.8,
+    "head_diameter_mm": 3.2,
+    "shoulder_angle_degrees": 45,
+    "embedded_bottom_z_mm": 6.118047965734325,
+    "material": "03_Gebaeude",
+    "color": "#AC5438",
+    "bounds": [
+      79.41583095000956,
+      109.57845474055819,
+      6.118047965734325,
+      82.61583095000955,
+      112.77845474055817,
+      14.29894230441367
+    ],
+    "embedded_volume_mm3": 6.71759478800887
+  },
   "parts": [
     {
       "name": "01_Terrain_Sockel",
       "watertight": true,
       "winding_consistent": true,
-      "volume_mm3": 488038.21716597467,
-      "triangles": 1125502
+      "volume_mm3": 487825.67252784636,
+      "triangles": 1235728
     },
     {
       "name": "02_Strassen_Schrift",
       "watertight": true,
       "winding_consistent": true,
-      "volume_mm3": 8170.28195924495,
-      "triangles": 590596
+      "volume_mm3": 5141.386707332418,
+      "triangles": 1238550
     },
     {
       "name": "03_Gebaeude",
       "watertight": true,
       "winding_consistent": true,
-      "volume_mm3": 3079.2689652946424,
-      "triangles": 157636
+      "volume_mm3": 8374.51480425749,
+      "triangles": 607006
     },
     {
       "name": "04_Vegetation",
       "watertight": true,
       "winding_consistent": true,
-      "volume_mm3": 18932.72243011661,
-      "triangles": 1659220
+      "volume_mm3": 19331.340834018967,
+      "triangles": 2193720
     }
   ],
-  "boolean_zero_volume_fragments_removed": 43,
+  "boolean_zero_volume_fragments_removed": 32407,
+  "boolean_numerical_residuals": {
+    "per_component_tolerance_mm3": 1e-05,
+    "max_removed_volume_mm3": 1.5849590109251466e-06,
+    "total_removed_absolute_volume_mm3": 0.0013518811676462477
+  },
   "connected_components": 1,
+  "monochrome_simplification_tolerance_mm": 0.0001,
+  "monochrome_stl_roundtrip_watertight": true,
   "overall_bounds_mm": [
     [
       0.0,
-      0.0,
+      -6.938893903907228e-18,
       0.0
     ],
     [
       200.0,
       200.0,
-      24.234432220458984
+      24.527498245239258
     ]
   ],
   "dimensions_mm": [
     200.0,
     200.0,
-    24.234432220458984
+    24.527498245239258
   ],
   "pairwise_intersections": [
     {
@@ -186,114 +295,128 @@
         1,
         2
       ],
-      "intersection_mm3": 9.346687102601519e-05
+      "intersection_mm3": 0.00010092127644576736
     },
     {
       "parts": [
         1,
         3
       ],
-      "intersection_mm3": 3.2343861255227575e-05
+      "intersection_mm3": 7.492547926318001e-05
     },
     {
       "parts": [
         1,
         4
       ],
-      "intersection_mm3": 8.499352322002935e-05
+      "intersection_mm3": 0.0012641926600938846
     },
     {
       "parts": [
         2,
         3
       ],
-      "intersection_mm3": 2.2157622958651757e-14
+      "intersection_mm3": 1.3254510341778005e-07
     },
     {
       "parts": [
         2,
         4
       ],
-      "intersection_mm3": 3.9507459803633793e-14
+      "intersection_mm3": 6.941062308252199e-15
     },
     {
       "parts": [
         3,
         4
       ],
-      "intersection_mm3": 1.1088352458443751e-14
+      "intersection_mm3": 8.073030362699268e-15
     }
   ],
   "cross_section_checks": {
-    "count": 151,
+    "count": 153,
     "all_nonempty": true,
-    "min_area_mm2": 0.1406329084427398
+    "min_area_mm2": 0.5975291249342263
+  },
+  "overhang_checks": {
+    "section_count": 153,
+    "layer_height_mm": 0.16,
+    "allowed_lateral_step_mm": 0.18,
+    "max_excess_area_mm2": 0.0,
+    "joined_stl_sha256": "d257ffaceb0cf285a1f575b447faeb510ccd951254a4c17a4d3b6d2e2508e810",
+    "stl_sha256": {
+      "01_Terrain_Sockel.stl": "73516e2c1168fdb64c36474b4e00b2483f60ba82389841fe0e7f1b031e40ccc7",
+      "02_Strassen_Schrift.stl": "122617878adc107c22edbab05f4b41b385f885b80e8e671f8c056434fde0fa70",
+      "03_Gebaeude.stl": "1758dd2ce372b497daba2bbf29c42faee7045ba153de9aea228c59caa29de5c6",
+      "04_Vegetation.stl": "1a35a4fc930e910d4aec3c5b2e22206ac0d2091483e64ed8105e8a6158982323"
+    },
+    "note": "Digital section-support check including the pin shoulder; no physical print claim."
   },
   "bambu_studio": {
     "version": "02.08.02.61",
     "result": {
       "error_string": "Success.",
-      "export_time": 14613,
+      "export_time": 21986,
       "layer_height": 0.1599999964237213,
       "plate_index": 1,
-      "prepare_time": 5834,
+      "prepare_time": 9748,
       "return_code": 0,
       "sliced_plates": [
         {
           "feature_type_times": {
             "Bottom surface": 930.4010620117188,
-            "Bridge": 1139.4119873046875,
-            "Custom": 376.9421691894531,
-            "Flush": 29467.611328125,
-            "Gap infill": 17.922441482543945,
-            "Inner wall": 6711.79296875,
-            "Internal solid infill": 4628.02685546875,
-            "Outer wall": 18943.32421875,
-            "Prime tower": 4165.203125,
-            "Sparse infill": 4386.72021484375,
-            "Top surface": 46.21727752685547,
-            "Travel": 20299.55859375,
-            "Undefined": 20284.705078125
+            "Bridge": 1369.275390625,
+            "Custom": 376.9425354003906,
+            "Flush": 29798.98046875,
+            "Gap infill": 16.428110122680664,
+            "Inner wall": 6181.97705078125,
+            "Internal solid infill": 4941.42724609375,
+            "Outer wall": 27274.55859375,
+            "Prime tower": 4194.47900390625,
+            "Sparse infill": 4383.97900390625,
+            "Top surface": 39.820159912109375,
+            "Travel": 27111.03515625,
+            "Undefined": 27096.181640625
           },
-          "filament_change_times": 349,
+          "filament_change_times": 353,
           "filaments": [
             {
               "filament_id": "GFL99",
               "id": 1,
-              "main_used_g": 151.35198974609375,
-              "total_used_g": 182.79710388183594
+              "main_used_g": 154.18905639648438,
+              "total_used_g": 185.57154846191406
             },
             {
               "filament_id": "GFL99",
               "id": 2,
-              "main_used_g": 10.39094352722168,
-              "total_used_g": 42.03945541381836
+              "main_used_g": 7.279582500457764,
+              "total_used_g": 39.58693313598633
             },
             {
               "filament_id": "GFL99",
               "id": 3,
-              "main_used_g": 3.3586621284484863,
-              "total_used_g": 25.01140594482422
+              "main_used_g": 11.30598258972168,
+              "total_used_g": 33.29356002807617
             },
             {
               "filament_id": "GFL99",
               "id": 4,
-              "main_used_g": 22.8170108795166,
-              "total_used_g": 58.11409378051758
+              "main_used_g": 23.65060043334961,
+              "total_used_g": 59.17040252685547
             }
           ],
-          "generate_support_material_time": 3199,
+          "generate_support_material_time": 24866,
           "id": 1,
-          "infill_time": 31219,
+          "infill_time": 49129,
           "layer_filament_change": 0,
-          "main_predication": 56699.0859375,
-          "make_perimeters_time": 62611,
+          "main_predication": 70898.640625,
+          "make_perimeters_time": 147844,
           "obj_cached_cnt": 0,
           "objects": [
             {
               "bbox": {
                 "depth": 200.0,
-                "height": 24.23443031311035,
+                "height": 24.527498245239258,
                 "width": 200.0,
                 "x": 19.0,
                 "y": 28.0,
@@ -301,13 +424,13 @@
               },
               "id": 5,
               "name": "Cusco",
-              "triangle_count": 3532954
+              "triangle_count": 5275004
             }
           ],
-          "sliced_time": 120189,
-          "sliced_time_with_cache": 20884,
-          "total_predication": 90722.9609375,
-          "triangle_count": 3532954,
+          "sliced_time": 270648,
+          "sliced_time_with_cache": 45098,
+          "total_predication": 105283.15625,
+          "triangle_count": 5275004,
           "warning_message": ""
         }
       ],
@@ -317,7 +440,7 @@
     "four_part_assignment_verified": true,
     "native_import_mesh_repairs": [
       {
-        "face_count": "1125502",
+        "face_count": "1235728",
         "edges_fixed": "0",
         "degenerate_facets": "0",
         "facets_removed": "0",
@@ -325,7 +448,7 @@
         "backwards_edges": "0"
       },
       {
-        "face_count": "590596",
+        "face_count": "1238550",
         "edges_fixed": "0",
         "degenerate_facets": "0",
         "facets_removed": "0",
@@ -333,7 +456,7 @@
         "backwards_edges": "0"
       },
       {
-        "face_count": "157636",
+        "face_count": "607006",
         "edges_fixed": "0",
         "degenerate_facets": "0",
         "facets_removed": "0",
@@ -341,7 +464,7 @@
         "backwards_edges": "0"
       },
       {
-        "face_count": "1659220",
+        "face_count": "2193720",
         "edges_fixed": "0",
         "degenerate_facets": "0",
         "facets_removed": "0",
@@ -349,28 +472,31 @@
         "backwards_edges": "0"
       }
     ],
+    "automatic_support_detection_enabled": true,
+    "generated_support_features": [],
+    "support_check_note": "With support generation disabled Bambu reports floating regions. Automatic tree-support calculation produces no support toolpaths; the independent STL section-support check also passes.",
     "gcode_header": [
       "; HEADER_BLOCK_START",
       "; BambuStudio 02.08.02.61",
-      "; model printing time: 1d 1h 5m 31s; total estimated time: 1d 1h 12m 2s",
-      "; total layer number: 150",
-      "; total filament length [mm] : 61288.87,14095.14,8385.91,19484.70",
-      "; total filament volume [cm^3] : 147417.02,33902.78,20170.49,46866.20",
-      "; total filament weight [g] : 182.80,42.04,25.01,58.11",
+      "; model printing time: 1d 5h 8m 12s; total estimated time: 1d 5h 14m 43s",
+      "; total layer number: 153",
+      "; total filament length [mm] : 62219.10,13272.85,11162.79,19838.87",
+      "; total filament volume [cm^3] : 149654.47,31924.95,26849.64,47718.07",
+      "; total filament weight [g] : 185.57,39.59,33.29,59.17",
       "; filament_density: 1.24,1.24,1.24,1.24",
       "; filament_diameter: 1.75,1.75,1.75,1.75",
-      "; max_z_height: 24.20",
+      "; max_z_height: 24.52",
       "; filament: 1,2,3,4",
       "; support_material_on_wipe_tower: 0",
       "; HEADER_BLOCK_END",
       ""
     ],
-    "project_sha256": "cc6c15599fc074641de303d519f7c35623b16636cc610eb2b74ed2b2f0292c0f"
+    "project_sha256": "997374b45a6b15db749a60c761668c08d83c0ce706171a5518434aa3868c7369"
   },
   "stl_sha256": {
-    "01_Terrain_Sockel.stl": "2e83fcd3b230876b2677fc2ff01a9b3934f8cd3c894d2a260116eabcb1f87e67",
-    "02_Strassen_Schrift.stl": "0543af0c15cf7b847cae8394bd1c6901ebc8bade5b400d06f8f95e06d92c798f",
-    "03_Gebaeude.stl": "927e0a2b71757e5747a7fb4c3257e2b701643317c6172ccc6d97475f61196830",
-    "04_Vegetation.stl": "0273fa9e17b34b7c8cf70018519e33c1276e535713b2cee035d65b59a129a7bb"
+    "01_Terrain_Sockel.stl": "73516e2c1168fdb64c36474b4e00b2483f60ba82389841fe0e7f1b031e40ccc7",
+    "02_Strassen_Schrift.stl": "122617878adc107c22edbab05f4b41b385f885b80e8e671f8c056434fde0fa70",
+    "03_Gebaeude.stl": "1758dd2ce372b497daba2bbf29c42faee7045ba153de9aea228c59caa29de5c6",
+    "04_Vegetation.stl": "1a35a4fc930e910d4aec3c5b2e22206ac0d2091483e64ed8105e8a6158982323"
   }
 }

@@ -1,0 +1,72 @@
+{
+  "before": {
+    "building_area_mm2": 1764.3978478263878,
+    "building_components": 1479,
+    "central_5km_building_area_mm2": 251.85410586591794,
+    "central_5km_building_coverage_percent": 10.014255167498218,
+    "road_area_mm2": 8336.804105174346,
+    "green_coverage_percent": 72.17311783807995,
+    "grid_mm": [
+      0.2724795640326976,
+      0.27411167512690354
+    ]
+  },
+  "after": {
+    "building_area_mm2": 3642.174857190279,
+    "building_components": 4938,
+    "central_5km_building_area_mm2": 863.6571736815171,
+    "central_5km_building_coverage_percent": 34.52875965809414,
+    "road_area_mm2": 5550.948145894134,
+    "green_coverage_percent": 75.06914635511926,
+    "grid_mm": [
+      0.1362397820163488,
+      0.13705583756345177
+    ]
+  },
+  "building_grouping": {
+    "minimum_component_area_mm2": 0.16,
+    "small_remnant_cells_before_rescue": 15267,
+    "cells_added_to_rescue_remnants": 18048,
+    "unprintable_cells_removed": 9614,
+    "max_growth_from_mapped_footprints_mm": 0.5449591280653951,
+    "road_cells_overwritten": 0
+  },
+  "density": {
+    "source_raster_area_mm2": 4233.979723094372,
+    "supplemental_new_raster_area_mm2": 1758.4226614475995,
+    "source_raster_area_overwritten_by_roads_percent": 46.861300992282246,
+    "final_building_area_mm2": 3642.174857190279,
+    "final_building_components": 4938,
+    "road_width_mm_by_class": {
+      "motorway": 0.5449591280653951,
+      "trunk": 0.5449591280653951,
+      "primary": 0.5449591280653951,
+      "secondary": 0.5449591280653951,
+      "tertiary": 0.5449591280653951,
+      "residential": 0.40871934604904636,
+      "living_street": 0.40871934604904636,
+      "unclassified": 0.40871934604904636,
+      "motorway_link": 0.40871934604904636,
+      "trunk_link": 0.40871934604904636,
+      "primary_link": 0.40871934604904636,
+      "secondary_link": 0.40871934604904636,
+      "tertiary_link": 0.40871934604904636
+    }
+  },
+  "building_area_increase_percent": 106.42594082038687,
+  "central_building_area_increase_percent": 242.91963226571767,
+  "note": "Plan-view raster areas of generalized building groups, not individual houses or measured real-world building areas. Central ROI: model x 60..110, y 83..133 mm; same geographic area in both grids.",
+  "previous_preview": {
+    "building_area_mm2": 2344.1776511431694,
+    "building_components": 2776,
+    "central_5km_building_area_mm2": 360.37842847065656,
+    "central_5km_building_coverage_percent": 14.40782352282483,
+    "road_area_mm2": 6348.859596951548,
+    "green_coverage_percent": 75.82140729438439,
+    "grid_mm": [
+      0.1362397820163488,
+      0.13705583756345177
+    ]
+  },
+  "increase_vs_previous_preview_percent": 55.371110863296735
+}

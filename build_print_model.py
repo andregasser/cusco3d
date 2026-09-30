@@ -4,10 +4,12 @@
 Run with .venv-model/bin/python. Old prototypes are deliberately left intact.
 """
 from pathlib import Path
-import gzip, json, math, zipfile, hashlib
+import gzip, json, math, zipfile, hashlib, os, sys
 from xml.sax.saxutils import escape
 import numpy as np
 from scipy import ndimage as ndi
+from scipy.sparse import coo_matrix
+from scipy.sparse.csgraph import connected_components
 from PIL import Image, ImageDraw
 import trimesh
 import manifold3d as md
@@ -23,10 +25,10 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT / 'output/print_v2'
 OUT.mkdir(parents=True, exist_ok=True)
 SIZE, AREA, BASE = 200., 20000., 4.
-# Keep the previous sampling grid and crop its front margin only after building
-# the feature heights. This preserves city blocks and roof heights exactly.
+# Preserve the original terrain triangles, but resolve map features twice as finely.
 SAMPLING_APRON = 16.
-NX, NY = 734, 788
+TERRAIN_NX, TERRAIN_NY = 734, 788
+NX, NY = 2*TERRAIN_NX, 2*TERRAIN_NY
 DX, DY = SIZE/NX, (SIZE+SAMPLING_APRON)/NY
 LAT, LON = -13.53195, -71.96746
 SOUTH = LAT-10/111.32
@@ -40,16 +42,30 @@ BUILDING_RISE, ROAD_RISE, AIRPORT_RISE = 1.20, .32, .40
 INLAY_DEPTH = .64  # Four 0.16 mm layers below terrain, plus the visible relief.
 LABEL_RISE, LABEL_DEPTH = .64, .48
 LABEL_WIDTH, LABEL_HEIGHT = 28.8, 7.5
-ROAD_WIDTHS = {'motorway':.95,'trunk':.95,'primary':.85,'secondary':.8,'tertiary':.7,
-               'residential':.6,'living_street':.6,'unclassified':.6,
-               'motorway_link':.6,'trunk_link':.6,'primary_link':.6,
-               'secondary_link':.6,'tertiary_link':.6}
+PIN_LAT, PIN_LON = -13.521908269187426, -71.98500062613564
+PIN_HEIGHT, PIN_SHAFT_RADIUS, PIN_HEAD_RADIUS = 5., .9, 1.6
+ROAD_WIDTHS = {'motorway':.6,'trunk':.6,'primary':.6,'secondary':.5,'tertiary':.5,
+               'residential':.4,'living_street':.4,'unclassified':.4,
+               'motorway_link':.4,'trunk_link':.4,'primary_link':.4,
+               'secondary_link':.4,'tertiary_link':.4}
+MAJOR_ROADS={'motorway','trunk','primary','secondary','tertiary',
+             'motorway_link','trunk_link','primary_link','secondary_link','tertiary_link'}
+MESH_TOLERANCE = 0.  # Remove only coplanar detail, preserving colour interfaces.
 report = {'label': LABEL, 'size_xy_mm': [SIZE, SIZE], 'terrain_km':20,
           'base_mm': BASE, 'inlay_depth_mm': INLAY_DEPTH,
           'layer_height_check_mm': .16, 'colors': dict(zip(NAMES,COLORS))}
 
+def refine_terrain(a):
+    """Subdivide the original b-c diagonal triangles without changing their shape."""
+    fine=np.empty((2*a.shape[0]-1,2*a.shape[1]-1))
+    fine[::2,::2]=a
+    fine[::2,1::2]=(a[:,:-1]+a[:,1:])/2
+    fine[1::2,::2]=(a[:-1]+a[1:])/2
+    fine[1::2,1::2]=(a[:-1,1:]+a[1:,:-1])/2
+    return fine
+
 def terrain():
-    x,y = np.meshgrid(np.linspace(0,SIZE,NX+1),np.linspace(-SAMPLING_APRON,SIZE,NY+1))
+    x,y = np.meshgrid(np.linspace(0,SIZE,TERRAIN_NX+1),np.linspace(-SAMPLING_APRON,SIZE,TERRAIN_NY+1))
     lat=SOUTH+np.clip(y/SIZE,0,1)*DLAT
     lon=WEST+x/SIZE*DLON
     elevation=np.zeros_like(x)
@@ -74,13 +90,53 @@ def terrain():
     z=BASE+(elevation-elevation.min())*(SIZE/AREA)*1.6
     report['dem']={'tiles':['S14W073','S14W072'],'voids_in_crop':0,
       'tile_seam_max_difference_m':float(seam.max()),'elevation_min_max_m':[float(raw.min()),float(raw.max())],
-      'gaussian_sigma_ground_m':float(1.25*DX*AREA/SIZE),'vertical_exaggeration':1.6,
+      'gaussian_sigma_ground_m':float(1.25*SIZE/TERRAIN_NX*AREA/SIZE),'vertical_exaggeration':1.6,
       'max_adjacent_elevation_change_m':float(max(abs(np.diff(elevation,axis=0)).max(),abs(np.diff(elevation,axis=1)).max()))}
     np.savez_compressed(OUT/'terrain_samples.npz',height=z,elevation=elevation)
-    return x,y,z
+    report['terrain_refinement']={'factor':2,'original_triangle_surface_preserved':True,
+      'feature_cell_mm':[DX,DY],'mesh_simplification_tolerance_mm':MESH_TOLERANCE}
+    return refine_terrain(x),refine_terrain(y),refine_terrain(z)
 
 def xy(p):
     return ((p['lon']-WEST)/DLON*SIZE/DX, (SAMPLING_APRON+(p['lat']-SOUTH)/DLAT*SIZE)/DY)
+
+def location_pin(x,y,upper,lower):
+    """A vertical, embedded marker in the same geographic frame as the map.
+
+    The 45-degree shoulder supports the rounded head without a horizontal
+    overhang. Bound all cells below the head to clear even nearby roof peaks.
+    """
+    col,row=xy({'lat':PIN_LAT,'lon':PIN_LON})
+    px,py=col*DX,row*DY-SAMPLING_APRON
+    r=PIN_HEAD_RADIUS
+    if not (r<px<SIZE-r and r<py<SIZE-r):
+        raise ValueError('Location pin lies outside the model')
+    cols=np.flatnonzero((x[0]>=px-r-DX)&(x[0]<=px+r+DX))
+    rows=np.flatnonzero((y[:,0]>=py-r-DY)&(y[:,0]<=py+r+DY))
+    patch=np.ix_(rows,cols)
+    level=float(upper[patch].max())
+    bottom=float(lower[patch].min())-.48
+    assert bottom>0, 'Pin embedding would reach below the base'
+    shoulder=PIN_HEAD_RADIUS-PIN_SHAFT_RADIUS
+    band=.4
+    stem_top=level+PIN_HEIGHT-r-band-shoulder
+    stem=md.Manifold.cylinder(stem_top-bottom,PIN_SHAFT_RADIUS,
+                              circular_segments=64).translate((0,0,bottom))
+    flare=md.Manifold.cylinder(shoulder,PIN_SHAFT_RADIUS,r,
+                               circular_segments=64).translate((0,0,stem_top))
+    rim=md.Manifold.cylinder(band,r,circular_segments=64).translate((0,0,stem_top+shoulder))
+    dome=md.Manifold.sphere(r,circular_segments=64)^md.Manifold.cube((2*r,2*r,r)).translate((-r,-r,0))
+    dome=dome.translate((0,0,level+PIN_HEIGHT-r))
+    pin=md.Manifold.batch_boolean([stem,flare,rim,dome],md.OpType.Add).translate((px,py,0))
+    assert pin.status()==md.Error.NoError and len(pin.decompose())==1
+    report['location_pin']={'latitude':PIN_LAT,'longitude':PIN_LON,
+      'coordinate_system':'WGS84 latitude/longitude; existing model projection',
+      'center_xy_mm':[px,py],'surface_reference_z_mm':level,
+      'height_above_local_surface_max_mm':PIN_HEIGHT,
+      'shaft_diameter_mm':2*PIN_SHAFT_RADIUS,'head_diameter_mm':2*r,
+      'shoulder_angle_degrees':45,'embedded_bottom_z_mm':bottom,
+      'material':NAMES[2],'color':COLORS[2],'bounds':list(pin.bounding_box())}
+    return pin
 
 def landcover():
     """Aggregate categorical WorldCover data to the terrain cells, north up first."""
@@ -136,10 +192,41 @@ def repair_material_contacts(mat):
             block[dj,di]=winner
     raise ValueError('Could not resolve diagonal material contacts')
 
+def group_buildings(raw,roads):
+    """Join nearby mapped houses and rescue small remnants within road barriers."""
+    grouped=ndi.binary_closing(ndi.binary_dilation(raw,iterations=1),
+                               structure=np.ones((2,2))) & ~roads
+    minimum_cells=math.ceil(.16/(DX*DY))
+    labels,n=ndi.label(grouped)
+    sizes=np.bincount(labels.ravel())
+    tiny=(sizes[labels]<minimum_cells)&grouped
+    # Only grow near actual mapped footprints, and never through a road cell.
+    allowed=ndi.binary_dilation(raw,iterations=4)&~roads
+    rescued=ndi.binary_dilation(tiny,iterations=2,mask=allowed)
+    grouped|=rescued
+    labels,n=ndi.label(grouped)
+    sizes=np.bincount(labels.ravel()); keep=sizes>=minimum_cells; keep[0]=False
+    removed=grouped&~keep[labels]
+    report['building_grouping']={'minimum_component_area_mm2':.16,
+      'small_remnant_cells_before_rescue':int(tiny.sum()),
+      'cells_added_to_rescue_remnants':int((rescued&~tiny).sum()),
+      'unprintable_cells_removed':int(removed.sum()),
+      'max_growth_from_mapped_footprints_mm':4*DX,
+      'road_cells_overwritten':0}
+    return grouped&~removed
+
+def prioritize_buildings(raw,roads,major,minor_core=None):
+    """Reclaim minor-road shoulders while keeping a narrow mapped street network."""
+    protected=ndi.binary_dilation(raw,iterations=1)
+    core=np.zeros_like(roads) if minor_core is None else minor_core
+    return (roads & (~protected | major)) | core
+
 def raster_layers():
     roads=Image.new('1',(NX,NY)); buildings=Image.new('1',(NX,NY)); green=Image.new('1',(NX,NY))
     airport=Image.new('1',(NX,NY)); da=ImageDraw.Draw(airport)
     dr,db,dg=map(ImageDraw.Draw,(roads,buildings,green))
+    main_roads=Image.new('1',(NX,NY)); dm=ImageDraw.Draw(main_roads)
+    minor_roads=Image.new('1',(NX,NY)); dminor=ImageDraw.Draw(minor_roads)
     counts={'roads':0,'building_footprints':0,'green_areas':0,'mapped_trees':0}
     osm=json.loads((ROOT/'data/cusco_osm.json').read_text())['elements']
     # Keep main network legible. Minor service alleys are intentionally omitted.
@@ -154,8 +241,41 @@ def raster_layers():
             counts['building_footprints']+=1
         elif tags.get('highway') in widths:
             dr.line(pts,fill=1,width=max(2,round(widths[tags['highway']]/DX)),joint='curve')
+            if tags['highway'] in MAJOR_ROADS:
+                dm.line(pts,fill=1,width=max(2,round(widths[tags['highway']]/DX)),joint='curve')
+            else:
+                dminor.line(pts,fill=1,width=2,joint='curve')
             counts['roads']+=1
             counts['road_links']+=int(tags['highway'].endswith('_link'))
+    osm_buildings=np.array(buildings,dtype=bool)
+    supplement_path=ROOT/'data/cusco_buildings_ms.geojson.gz'
+    supplement=json.loads(gzip.decompress(supplement_path.read_bytes()))
+    for feature in supplement['features']:
+        geom=feature['geometry']
+        polygons=geom['coordinates'] if geom['type']=='MultiPolygon' else [geom['coordinates']]
+        for polygon in polygons:
+            # Union each footprint separately so a courtyard cannot erase an
+            # existing OSM building or a neighbouring supplemental footprint.
+            rings=[[xy({'lon':lon,'lat':lat}) for lon,lat in ring] for ring in polygon]
+            if len(rings)==1:
+                db.polygon(rings[0],fill=1)
+            else:
+                mask=Image.new('1',(NX,NY)); draw=ImageDraw.Draw(mask)
+                draw.polygon(rings[0],fill=1)
+                for ring in rings[1:]:draw.polygon(ring,fill=0)
+                buildings.paste(1,mask=mask)
+    report['supplemental_buildings']=json.loads((ROOT/'data/cusco_buildings_ms.json').read_text())
+    assert report['supplemental_buildings']['crop_sha256']==hashlib.sha256(supplement_path.read_bytes()).hexdigest()
+    assert report['supplemental_buildings']['osm_sha256']==hashlib.sha256((ROOT/'data/cusco_osm.json').read_bytes()).hexdigest()
+    # Keep the existing decorative label landing. New ML footprints inside
+    # this reserved patch are reported explicitly rather than flattened silently.
+    xmin,ymin,xmax,ymax=label_shape().bounds
+    rows=slice(math.floor((ymin-2+SAMPLING_APRON)/DY),math.ceil((ymax+2+SAMPLING_APRON)/DY))
+    cols=slice(math.floor((xmin-2)/DX),math.ceil((xmax+2)/DX))
+    combined=np.array(buildings,dtype=bool)
+    report['supplemental_buildings']['label_patch_cells_excluded']=int((combined[rows,cols]&~osm_buildings[rows,cols]).sum())
+    combined[rows,cols]=osm_buildings[rows,cols]
+    buildings=Image.fromarray(combined)
     # Separate OSM query: the original highway/building selection omitted airfields.
     airport_data=json.loads((ROOT/'data/cusco_airport.json').read_text())
     counts['airport']={'runway':0,'taxiway':0,'apron':0}
@@ -182,10 +302,13 @@ def raster_layers():
             if 0<=xx<NX and SAMPLING_APRON/DY<=yy<NY:
                 dg.ellipse((xx-r,yy-r,xx+r,yy+r),fill=1); counts['mapped_trees']+=1
     b=np.array(buildings,dtype=bool)
-    # A single-cell dilation gives tiny mapped houses a printable footprint.
-    b=ndi.binary_dilation(b,iterations=1)
-    b=ndi.binary_closing(b,structure=np.ones((2,2)))
     r=np.array(roads,dtype=bool); g=np.array(green,dtype=bool)
+    raw_buildings=b.copy()
+    air=np.array(airport,dtype=bool)
+    major=np.array(main_roads,dtype=bool)
+    original_roads=r.copy()
+    r=prioritize_buildings(b,r,major,np.array(minor_roads,dtype=bool))
+    b=group_buildings(b,r|air)
     satellite_green=landcover()
     # Keep the existing horizontal sand-coloured lettering landing. Only the
     # new land-cover tint is excluded here; mapped OSM features stay protected.
@@ -195,14 +318,13 @@ def raster_layers():
     report['landcover']['label_patch_green_cells_excluded']=int(satellite_green[label_rows,label_cols].sum())
     satellite_green[label_rows,label_cols]=False
     mat=np.zeros((NY,NX),np.uint8)
-    air=np.array(airport,dtype=bool)
     mat[g|satellite_green]=3; mat[b]=2; mat[r|air]=1
     mat[:math.ceil(SAMPLING_APRON/DY)]=0
     mat[[0,-1],:]=0; mat[:,[0,-1]]=0
     # Remove isolated pixel specks that would be below nozzle width.
-    for k in (2,3):
+    for k in (3,):
         lab,n=ndi.label(mat==k)
-        sizes=np.bincount(lab.ravel()); keep=sizes>=4; keep[0]=False
+        sizes=np.bincount(lab.ravel()); keep=sizes>=16; keep[0]=False
         mat[(mat==k)&~keep[lab]]=0
     before=mat.copy()
     iterations=repair_material_contacts(mat)
@@ -215,24 +337,35 @@ def raster_layers():
       'source_cells_removed':0,'components_before':int(n),'components_after':int(ndi.label(mat==1)[1]),
       'existing_components_preserved':True,'repair_iterations':iterations,
       'cells_reassigned':int((before!=mat).sum()),'road_cells_added':int(((before!=1)&(mat==1)).sum())}
+    protected=major|air
+    protected[:math.ceil(SAMPLING_APRON/DY)]=False
+    protected[[0,-1],:]=False; protected[:,[0,-1]]=False
+    assert np.all(mat[protected]==1), 'Main road or airport was overwritten'
+    report['road_topology'].update({'major_roads_and_airport_preserved':True,
+      'minor_road_cells_yielded_to_buildings':int((original_roads&~r&~air).sum()),
+      'minor_road_core_width_mm':2*DX,
+      'note':'Minor-road shoulders yield to buildings; a two-cell mapped core remains. All main-road and airport cells remain protected.'})
     report['osm']=counts
     report['airport_source_timestamp']=airport_data['osm3s']['timestamp_osm_base']
     report['feature_relief_mm']={'building_roof_offset':BUILDING_RISE,
       'road_offset':ROAD_RISE,'airport_offset':AIRPORT_RISE,
-      'note':'Cell targets blended at shared mesh vertices; roof offset above block maximum.'}
+      'note':'Buildings have horizontal roofs and vertical walls; only road relief is blended.'}
+    interior=np.arange(NY)[:,None]*DY>=SAMPLING_APRON
+    report['building_density']={'source_raster_area_mm2':float((raw_buildings&interior).sum()*DX*DY),
+      'supplemental_new_raster_area_mm2':float((raw_buildings&~osm_buildings&interior).sum()*DX*DY),
+      'source_raster_area_overwritten_by_roads_percent':float(100*(raw_buildings&(r|air)&interior).sum()/(raw_buildings&interior).sum()),
+      'final_building_area_mm2':float(((mat==2)&interior).sum()*DX*DY),
+      'final_building_components':int(ndi.label((mat==2)&interior)[1]),
+      'road_width_mm_by_class':{k:round(v/DX)*DX for k,v in ROAD_WIDTHS.items()}}
     report['airport_cells']=int((air & (mat==1)).sum())
     report['material_cells']=[int((mat==i).sum()) for i in range(4)]
     return mat,air
 
 def surface_heights(z,mat,airport):
     center=(z[:-1,:-1]+z[1:,:-1]+z[:-1,1:]+z[1:,1:])/4
-    lab,n=ndi.label(mat==2)
-    peaks=ndi.maximum(center,lab,np.arange(n+1)); peaks[0]=0
-    roofs=peaks[lab]+BUILDING_RISE
-    # Flat connected city-block roofs; heights schematic where no measured data exists.
     street_rise=np.where(airport,AIRPORT_RISE,ROAD_RISE)
     # Vegetation is a surface colour, without raising entire mountainsides.
-    target=np.where(mat==2,roofs,center+np.where(mat==1,street_rise,0))
+    target=center+np.where(mat==1,street_rise,0)
     extra=target-center
     ev=np.zeros_like(z); cnt=np.zeros_like(z)
     for dj,di in [(0,0),(1,0),(0,1),(1,1)]:
@@ -241,6 +374,25 @@ def surface_heights(z,mat,airport):
     upper=z+ev/cnt
     lower=z-INLAY_DEPTH
     return upper,lower
+
+def building_roof_heights(ground,mat):
+    """Flat caps above each road-separated block, including boundary vertices."""
+    labels,n=ndi.label(mat==2)
+    corner_max=np.maximum.reduce([ground[:-1,:-1],ground[1:,:-1],
+                                  ground[:-1,1:],ground[1:,1:]])
+    peaks=ndi.maximum(corner_max,labels,np.arange(n+1))+BUILDING_RISE
+    peaks[0]=0
+    caps=peaks[labels]
+    roofs=ground.copy()
+    for dj,di in [(0,0),(1,0),(0,1),(1,1)]:
+        target=roofs[dj:dj+mat.shape[0],di:di+mat.shape[1]]
+        np.maximum(target,caps,out=target)
+    errors=np.maximum.reduce([abs(roofs[:-1,:-1]-caps),abs(roofs[1:,:-1]-caps),
+                              abs(roofs[:-1,1:]-caps),abs(roofs[1:,1:]-caps)])
+    assert not n or errors[mat==2].max()<1e-9, 'Non-flat building roof or diagonal building contact'
+    report['building_roofs']={'components':int(n),'flat_roof_max_error_mm':float(errors[mat==2].max()) if n else 0.,
+      'wall_orientation':'vertical','minimum_rise_above_block_mm':BUILDING_RISE}
+    return roofs
 
 def crop_front_margin(x,y,upper,lower,mat):
     """Keep all original interior vertices; interpolate only the new south edge."""
@@ -363,6 +515,30 @@ def as_mesh(solid):
     m=solid.to_mesh()
     return trimesh.Trimesh(np.asarray(m.vert_properties)[:,:3],np.asarray(m.tri_verts),process=False)
 
+def joined_body(mesh):
+    """Check face connectivity in one sparse pass, discarding zero-volume debris."""
+    adjacency=mesh.face_adjacency
+    graph=coo_matrix((np.ones(len(adjacency),dtype=bool),adjacency.T),
+                     shape=(len(mesh.faces),len(mesh.faces)))
+    count,labels=connected_components(graph,directed=False)
+    triangles=mesh.triangles-mesh.bounds.mean(axis=0)
+    signed=np.einsum('ij,ij->i',triangles[:,0],np.cross(triangles[:,1],triangles[:,2]))/6
+    volumes=np.bincount(labels,weights=signed,minlength=count)
+    # Float32 STL interfaces can leave closed numerical sheets. The largest
+    # allowed residual is many orders below a printable 0.16-mm layer feature.
+    tolerance=1e-5
+    keep=np.abs(volumes)>tolerance
+    report['boolean_zero_volume_fragments_removed']=int((~keep).sum())
+    report['boolean_numerical_residuals']={'per_component_tolerance_mm3':tolerance,
+      'max_removed_volume_mm3':float(np.max(np.abs(volumes[~keep]),initial=0)),
+      'total_removed_absolute_volume_mm3':float(np.abs(volumes[~keep]).sum())}
+    assert np.abs(volumes[~keep]).sum()<.01, 'Excessive boolean residual volume'
+    report['connected_components']=int(keep.sum())
+    assert keep.sum()==1, f'{keep.sum()} detached pieces'
+    mesh.update_faces(keep[labels]); mesh.remove_unreferenced_vertices()
+    assert mesh.is_watertight and mesh.is_winding_consistent and mesh.volume>0
+    return mesh
+
 def write_3mf(meshes):
     xml=['<?xml version="1.0" encoding="UTF-8"?>',
       '<model unit="millimeter" xml:lang="en-US" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02">',
@@ -372,7 +548,8 @@ def write_3mf(meshes):
     xml.append('</basematerials>')
     for i,mesh in enumerate(meshes,1):
         xml.append(f'<object id="{i}" type="model" name="{NAMES[i-1]}" pid="10" pindex="{i-1}"><mesh><vertices>')
-        xml.extend('<vertex x="%.7g" y="%.7g" z="%.7g"/>'%tuple(v) for v in mesh.vertices)
+        # Nine significant digits round-trip the exported STL's float32 values.
+        xml.extend('<vertex x="%.9g" y="%.9g" z="%.9g"/>'%tuple(v) for v in mesh.vertices)
         xml.append('</vertices><triangles>')
         xml.extend('<triangle v1="%d" v2="%d" v3="%d"/>'%tuple(f) for f in mesh.faces)
         xml.append('</triangles></mesh></object>')
@@ -397,14 +574,26 @@ def main():
     x,y,upper,lower,mat=crop_front_margin(x,y,upper,lower,mat)
     shape=label_shape()
     label_level=flatten_label_surface(shape,x,y,upper,lower,mat)
+    roofs=building_roof_heights(upper,mat)
     solids=[]
     for i in range(4):
         print('Building watertight solid',NAMES[i],flush=True)
-        solids.append(solid_for_material(i,x,y,upper,lower,mat))
+        solids.append(solid_for_material(i,x,y,roofs if i==2 else upper,lower,mat))
     print('Adding horizontal lettering on the internal flat surface...',flush=True)
     label=text_solid(shape,label_level)
     solids[0]=solids[0]-label
     solids[1]=solids[1]+label
+    print('Adding embedded location pin at the supplied GPS coordinate...',flush=True)
+    pin=location_pin(x,y,roofs,lower)
+    embedded=sum((solid^pin).volume() for solid in solids)
+    assert embedded>0, 'Location pin does not intersect the relief'
+    report['location_pin']['embedded_volume_mm3']=embedded
+    for i in range(4):
+        solids[i]=solids[i]+pin if i==2 else solids[i]-pin
+    print('Simplifying coplanar mesh detail...',flush=True)
+    # Shared terrain/inlay surfaces must stay identical across materials. A
+    # zero-tolerance simplification removes only coplanar edges at interfaces.
+    solids=[solid.simplify(MESH_TOLERANCE) for solid in solids]
     report['parts']=[]; meshes=[]
     for i,solid in enumerate(solids):
         assert solid.status()==md.Error.NoError
@@ -414,22 +603,58 @@ def main():
         meshes.append(mesh)
         report['parts'].append({'name':NAMES[i],'watertight':bool(mesh.is_watertight),
           'winding_consistent':bool(mesh.is_winding_consistent),'volume_mm3':float(mesh.volume),'triangles':len(mesh.faces)})
+    # Boolean construction retains large native allocation pools. Start the
+    # validation phase fresh so the finer map fits in workstation memory.
+    stage={'report':report,'generator_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+      'stl_sha256':{name:hashlib.sha256((OUT/name).read_bytes()).hexdigest()
+                    for name in (f'{n}.stl' for n in NAMES)}}
+    (OUT/'geometry_stage.json').write_text(json.dumps(stage,indent=2))
+    print('Restarting with exported meshes for bounded-memory validation...',flush=True)
+    os.execv(sys.executable,[sys.executable,str(Path(__file__).resolve()),'--validate-exports'])
+
+def validate_exports():
+    stage=json.loads((OUT/'geometry_stage.json').read_text())
+    assert stage['generator_sha256']==hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), 'Generator changed since mesh export'
+    report.clear(); report.update(stage['report'])
+    solids=[]; meshes=[]
+    for name in NAMES:
+        path=OUT/f'{name}.stl'
+        assert hashlib.sha256(path.read_bytes()).hexdigest()==stage['stl_sha256'][path.name], 'Stale or modified mesh'
+        mesh=trimesh.load_mesh(path,process=True)
+        assert mesh.is_watertight and mesh.is_winding_consistent and mesh.volume>0
+        meshes.append(mesh)
+        solids.append(md.Manifold(md.Mesh(np.asarray(mesh.vertices,dtype=np.float32),
+                                         np.asarray(mesh.faces,dtype=np.uint32))))
+        assert solids[-1].status()==md.Error.NoError
+    print('Exporting assembled 3MF from checked mesh files...',flush=True)
+    write_3mf(meshes)
+    del meshes,mesh
     print('Checking intersections and joined solid...',flush=True)
     overlaps=[]
     for i in range(4):
         for j in range(i+1,4):
+            print('Checking material pair',i+1,j+1,flush=True)
             v=abs((solids[i]^solids[j]).volume())
             assert v<.02,(i,j,v)
             overlaps.append({'parts':[i+1,j+1],'intersection_mm3':v})
+    print('Joining all four materials...',flush=True)
     whole=md.Manifold.batch_boolean(solids,md.OpType.Add)
-    all_components=whole.decompose()
-    components=[c for c in all_components if abs(c.volume())>1e-6]
-    report['boolean_zero_volume_fragments_removed']=len(all_components)-len(components)
-    report['connected_components']=len(components)
-    assert len(components)==1, f'{len(components)} detached pieces'
-    whole=components[0]
     full=as_mesh(whole)
+    print('Checking joined mesh connectivity...',flush=True)
+    full=joined_body(full)
+    whole=md.Manifold(md.Mesh(np.asarray(full.vertices,dtype=np.float32),
+                             np.asarray(full.faces,dtype=np.uint32)))
+    assert whole.status()==md.Error.NoError
+    # Only the single-colour union is simplified with a nonzero tolerance.
+    # Remove sub-micron coincident edges before STL loses indexed topology.
+    whole=whole.simplify(.0001)
+    full=as_mesh(whole)
+    report['monochrome_simplification_tolerance_mm']=.0001
     full.export(OUT/'Cusco_einfarbig.stl')
+    roundtrip=trimesh.load_mesh(OUT/'Cusco_einfarbig.stl',process=True)
+    assert roundtrip.is_watertight and roundtrip.is_winding_consistent
+    report['monochrome_stl_roundtrip_watertight']=True
+    del roundtrip
     report['overall_bounds_mm']=full.bounds.tolist()
     report['dimensions_mm']=full.extents.tolist()
     report['pairwise_intersections']=overlaps
@@ -438,9 +663,14 @@ def main():
     areas=[whole.slice(float(h)).area() for h in levels]
     assert all(a>0 for a in areas)
     report['cross_section_checks']={'count':len(areas),'all_nonempty':True,'min_area_mm2':min(areas)}
-    print('Exporting assembled 3MF...',flush=True)
-    write_3mf(meshes)
+    del whole,full,solids
     (OUT/'validation.json').write_text(json.dumps(report,indent=2))
-    print(json.dumps({'dimensions':report['dimensions_mm'],'components':len(components),'label':LABEL},indent=2),flush=True)
+    print(json.dumps({'dimensions':report['dimensions_mm'],'components':report['connected_components'],'label':LABEL},indent=2),flush=True)
 
-if __name__=='__main__': main()
+if __name__=='__main__':
+    if sys.argv[1:]==['--validate-exports']:
+        validate_exports()
+    elif len(sys.argv)==1:
+        main()
+    else:
+        raise SystemExit('Usage: build_print_model.py [--validate-exports]')

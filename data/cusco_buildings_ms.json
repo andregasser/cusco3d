@@ -1,0 +1,26 @@
+{
+  "dataset": "Microsoft Global ML Building Footprints",
+  "release": "2026-08-13",
+  "tile_quadkey": "210031023",
+  "url": "https://bfppub.z5.web.core.windows.net/2026-08-13/global-buildings.geojsonl/RegionName=Peru/quadkey=210031023/part-00142-110f5303-ff85-4c71-a2bf-c6070024fec8.c000.csv.gz",
+  "license": "CDLA-Permissive-2.0",
+  "source_sha256": "485dc8f600cb0eef52a717a7ad3ad88c3fcc08c9e8d7604bce136e1528b02d09",
+  "crop_sha256": "6c5c93c55ba2e42877ec77eef1855329b4cf259a9430fbcb5bfdf3f6c954cbed",
+  "osm_sha256": "bf3ef798cd9f459011ec86cee118a4057408f7dbb87fd7d790d79c6a97f1df90",
+  "crop_lon_lat": [
+    -72.05985607005947,
+    -13.621781117499102,
+    -71.87506392994055,
+    -13.4421188825009
+  ],
+  "counts": {
+    "tile_features": 236643,
+    "intersecting_crop": 103394,
+    "duplicates_rejected": 21874,
+    "small_or_low_confidence_rejected": 76,
+    "accepted": 81444,
+    "accepted_unknown_confidence": 81444
+  },
+  "filter": "At least 12 m\u00b2; confidence >= 0.65 when supplied; unknown (-1) retained. Reject >=50% area overlap with OSM; residual overlap unioned in raster.",
+  "note": "ML-derived footprints may contain omissions and false positives. Unknown confidence is not a high-confidence claim. Accepted polygons are additions to OSM, not a count of newly discovered individual houses. Heights are not used."
+}

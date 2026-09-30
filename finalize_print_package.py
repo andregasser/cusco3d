@@ -12,6 +12,20 @@ result=json.loads((CHECK/'result.json').read_text())
 assert result['return_code']==0, result
 assert len(result.get('sliced_plates',[]))==1 and .15<float(result['layer_height'])<.17, 'Need actual slice result, not an export-only result'
 assert result['sliced_plates'][0]['warning_message']=='', result['sliced_plates'][0]['warning_message']
+validation=json.loads((OUT/'validation.json').read_text())
+assert validation['overhang_checks']['max_excess_area_mm2']<1e-5
+current_stl_hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(OUT.glob('0*.stl'))}
+assert validation['overhang_checks']['stl_sha256']==current_stl_hashes, 'Stale overhang check'
+input_snapshot=CHECK/'input_geometry_hashes.json'
+if input_snapshot.exists():
+    snapshot=json.loads(input_snapshot.read_text())
+    assert snapshot['stl_sha256']==current_stl_hashes, 'Geometry changed after slicing'
+    with zipfile.ZipFile(OUT/'Cusco_AMS_4_Farben.3mf') as neutral:
+        assert snapshot['model_xml_sha256']==hashlib.sha256(neutral.read('3D/3dmodel.model')).hexdigest()
+with (CHECK/'plate_1.gcode').open() as gcode:
+    support_features=sorted({line.strip() for line in gcode
+        if line.startswith('; FEATURE: ') and 'support' in line.lower()})
+assert not support_features, f'Unexpected generated supports: {support_features}'
 source=CHECK/'Cusco_unsliced.3mf'
 assert source.exists(), 'Missing native Bambu export'
 target=OUT/'Cusco_P1S_AMS.3mf'
@@ -43,17 +57,19 @@ with zipfile.ZipFile(target) as z:
     assert settings['filament_colour']==expected_colors
     assert settings['flush_into_infill']=='1' and settings['infill_combination']=='1'
     assert settings['prime_tower_rib_wall']=='0'
+    assert settings['enable_support']=='1' and settings['support_type']=='tree(auto)'
     repairs=[n.attrib for n in config.findall('.//mesh_stat')]
     assert all(int(v)==0 for a in repairs for k,v in a.items() if k!='face_count')
 
 header=[]
 with (CHECK/'plate_1.gcode').open() as f:
     for _ in range(14):header.append(next(f).rstrip())
-validation=json.loads((OUT/'validation.json').read_text())
 validation['bambu_studio']={'version':'02.08.02.61','result':result,
   'four_part_assignment_verified':True,'native_import_mesh_repairs':repairs,
+  'automatic_support_detection_enabled':True,'generated_support_features':support_features,
+  'support_check_note':'With support generation disabled Bambu reports floating regions. Automatic tree-support calculation produces no support toolpaths; the independent STL section-support check also passes.',
   'gcode_header':header,'project_sha256':hashlib.sha256(target.read_bytes()).hexdigest()}
-validation['stl_sha256']={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(OUT.glob('0*.stl'))}
+validation['stl_sha256']=current_stl_hashes
 (OUT/'validation.json').write_text(json.dumps(validation,indent=2))
 # Keep the standalone print guide; the README now references repository assets.
 assert (OUT/'Druckhinweise.md').exists(), 'Missing standalone print guide'

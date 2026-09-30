@@ -1,0 +1,52 @@
+{
+  "note": "Built-up land-cover is settlement evidence, not individual building outlines. Each local comparison covers the same 2 x 2 km square.",
+  "built_up_without_building_within_100m_percent": {
+    "osm": 14.563817271032875,
+    "osm_plus_microsoft": 2.9101759124117104
+  },
+  "model_building_area_mm2": 3642.174857190279,
+  "zones": [
+    {
+      "name": "Nordwest",
+      "latitude": -13.513037074,
+      "longitude": -71.996794995,
+      "source_footprint_area_mm2": {
+        "osm": 15.143362978741063,
+        "osm_plus_microsoft": 206.70410379120045
+      },
+      "urban_without_nearby_building_percent": {
+        "osm": 69.6548698449839,
+        "osm_plus_microsoft": 0.0
+      },
+      "model_building_area_mm2": 156.02705431610397
+    },
+    {
+      "name": "Suedwest",
+      "latitude": -13.541610351,
+      "longitude": -71.986891649,
+      "source_footprint_area_mm2": {
+        "osm": 28.15806581003887,
+        "osm_plus_microsoft": 183.60627394569772
+      },
+      "urban_without_nearby_building_percent": {
+        "osm": 35.58554782462905,
+        "osm_plus_microsoft": 0.008382932349735937
+      },
+      "model_building_area_mm2": 128.09305799526965
+    },
+    {
+      "name": "Flughafenumfeld",
+      "latitude": -13.535798322,
+      "longitude": -71.940185508,
+      "source_footprint_area_mm2": {
+        "osm": 178.34064094939075,
+        "osm_plus_microsoft": 250.67774104759405
+      },
+      "urban_without_nearby_building_percent": {
+        "osm": 6.534009920748047,
+        "osm_plus_microsoft": 5.142824562403786
+      },
+      "model_building_area_mm2": 146.20534170597105
+    }
+  ]
+}

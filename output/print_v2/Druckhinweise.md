@@ -1,173 +1,77 @@
-# Cusco – Cusco-Relief für Bambu Lab P1S, Version 2
+# Cusco-Relief für Bambu Lab P1S
 
-Die aktuelle Fassung liegt ausschließlich unter **`output/print_v2/`**.
-Dateien direkt unter `output/` sowie die alten Generator- und Vorschau-Skripte
-sind überholte Prototypen. Bitte nicht mehr zum Drucken verwenden.
+Aktuell ist ausschließlich `output/print_v2/Cusco_P1S_AMS.3mf`. Die Datei enthält
+das native P1S-Profil für die 0,4-mm-Düse und vier Farbzuordnungen. Als **Projekt**
+öffnen, eigene Filamente und AMS-Slots zuordnen und neu slicen. Die Datei enthält
+keinen vorgefertigten G-Code. Dateien direkt unter `output/` sind alte Prototypen.
 
-Git enthält die Skripte und Quelldaten sowie die aktuelle `Cusco_P1S_AMS.3mf`,
-die PNG-Vorschauen, Druckhinweise und den Prüfbericht. Generierte STL-Dateien,
-alternative Exporte, Blender-Szenen und temporäre Slicer-Dateien bleiben lokal;
-sie sind über `.gitignore` ausgeschlossen.
+## Modell und ergänzte Stadt
 
-## Modell
+- 200 × 200 × 24,53 mm; 20 × 20 km Landschaft, horizontal 1:100.000, Höhen 1,6-fach überhöht.
+- Ebene Unterseite, Sockelbasis 4 mm vor der 0,64 mm tiefen Farbeinbettung.
+- Die ursprünglichen Geländedreiecke werden auf rund 14 m Rasterweite unterteilt; die Geländegrundlage und ihre Glättung bleiben erhalten.
+- OSM wird durch 81.444 Microsoft-Grundrisse ergänzt. 21.874 stark überlappende Dubletten sowie 76 sehr kleine oder unzureichend bewertete Geometrien wurden ausgesondert. Verbleibende Überlappungen werden im Raster vereinigt; die Zahl ist keine Zählung neuer Einzelhäuser.
+- Die Modellfläche für Gebäude beträgt rund 3.642 mm² statt 2.344 mm² in der letzten Vorschau. Etwa 4.938 getrennte Häusergruppen erhalten waagerechte Dächer und senkrechte Wände. Dächer liegen 1,20 mm über dem höchsten Oberflächenpunkt des jeweiligen Blocks; Höhen sind schematisch.
+- Hauptstraßen und Flughafen sind geschützt. Nebenstraßen behalten in dichten Vierteln einen rund 0,27 mm breiten Rasterkern; ihre zuvor überzeichneten Randbereiche weichen der Bebauung. Sehr schmale Farbdetails können im Slicer weiter vereinfacht werden. Wohnstraßen außerhalb solcher Engstellen sind bis etwa 0,41 mm, Hauptstraßen rund 0,55 mm breit.
+- Startbahn, 18 Rollwegsegmente und zwei Vorfelder bleiben enthalten. Startbahn rund 1,09 mm, Rollwege rund 0,55 mm breit; 0,40 mm Höhenaufschlag. Straßenaufschlag 0,32 mm.
+- WorldCover und OSM färben rund 75 % der Draufsicht grün, ohne zusätzliche Vegetationshöhe. Die Daten sind eine Landbedeckungsklassifikation von 2021.
+- „Cusco“ steht waagerecht auf einer etwa 30 × 9 mm großen internen Schriftfläche: 28,8 × 7,5 mm Schriftbild, 0,64 mm erhaben, 0,48 mm eingebettet. Ein neu hinzugekommenes Quellrasterfeld wird zugunsten dieser dekorativen Fläche ausgespart und im Prüfbericht ausgewiesen.
+- Standort-Pin an **−13.521908269187426, −71.98500062613564**, Modellposition X = 81,016 / Y = 111,178 mm ab der südwestlichen Ecke. 5 mm über der höchsten unmittelbaren Umgebung, 1,8 mm Schaft und 3,2 mm abgerundeter Kopf; fest eingebettet und mit 45°-Schulter.
 
-- Grundfläche 200 × 200 mm; Höhe siehe `output/print_v2/validation.json`.
-- Der vordere, 16 mm tiefe Beschriftungsstreifen entfällt. Der gesamte
-  Landschaftsausschnitt bleibt erhalten. Nur die kleine Schriftfläche innerhalb
-  des Modells wird eingeebnet.
-- 20 × 20 km um Cusco, horizontal 1:100.000, Höhen 1,6-fach überhöht.
-- Ebene Unterseite, durchgehender Sockel mit 4 mm Mindesthöhe vor der
-  0,64 mm tiefen Einbettung der farbigen Oberflächen. Die unsichtbare Einbettung
-  ist um 0,16 mm reduziert; die äußere Form bleibt dabei exakt gleich.
-- Korrekte Höhendatenkacheln S14W073 und S14W072, keine wiederholte Kachel
-  am westlichen Rand. Leichte Gauß-Glättung mit rund 34 m Standardabweichung.
-- OSM-Gebäude werden zu druckbaren Häusergruppen zusammengefasst; Höhen
-  sind schematisch. Kleine Gassen und Grundstücksgrenzen sind bei diesem
-  Maßstab nicht einzeln druckbar. Straßen und Bebauung sind generalisiert.
-- Dezent verstärkte Sichtbarkeit: Dachaufschlag 1,20 statt 0,95 mm,
-  Straßenaufschlag 0,32 statt 0,18 mm, an gemeinsamen Rasterpunkten gemittelt.
-  Straßenbreiten unverändert; Grau und Terrakotta etwas dunkler.
-- Flughafen mit kartierter Startbahn 10/28, 18 Rollwegsegmenten und zwei
-  Vorfeldern. Startbahn rund 1,09 mm breit, Rollwege rund 0,54 mm,
-  Höhenaufschlag 0,40 mm; gleiche Farbe wie Straßen.
-- 119 zusätzliche OSM-Verbindungs- und Auffahrtssegmente; insgesamt 7.581
-  Straßensegmente. Die Kontaktbereinigung erhält alle Straßen-/Flughafenzellen
-  und jede vorhandene Rasterverbindung, statt Straßenstücke zu löschen.
-- ESA WorldCover 2021 v200 (10 m) ergänzt die OSM-Grünflächen flächendeckend.
-  Wald, Grasland, Buschland und Ackerflächen teilen sich den Grünton; Straßen,
-  Flughafen und Gebäude haben Vorrang. Etwa 72 % der Draufsicht sind grün.
-  Vegetation ist jetzt reine Oberflächenfarbe ohne zusätzlichen Höhenaufschlag.
-  Die Daten stammen aus 2021 und bilden keine jahreszeitlichen Farben ab.
-  Braun bleibt die Grundfarbe für Sockel, Schriftfläche und übrige Flächen,
-  einschließlich der wenigen Wasserzellen; es bedeutet nicht zwingend kahlen Boden.
-- Schrift exakt **„Cusco“**. DejaVu Sans Bold, 28,8 × 7,5 mm Schriftbild,
-  waagerecht auf einer etwa 30 × 9 mm großen ebenen Fläche vorne links,
-  vollständig innerhalb der Modellkante. 0,64 mm erhaben und 0,48 mm eingebettet.
-  Kräftigerer Schriftschnitt und eine zusätzliche 0,16-mm-Höhenschicht betonen
-  den Namen bei nahezu unveränderter Schriftbreite.
-  Alle fünf Buchstaben stehen auf gleicher Höhe in einem Bereich ohne
-  kartierte OSM-Merkmale. Die WorldCover-Grünfarbe wird dort ausgespart.
-  Ein schmaler Rand verbindet die ebene Fläche mit dem Gelände.
+## Farben und Profil
 
-## Vier AMS-Farben
-
-| Teil | Farbe |
+| Teil / AMS-Zuordnung | Farbe |
 | --- | --- |
-| 01_Terrain_Sockel | Sand-/Erdbraun |
-| 02_Strassen_Schrift (mit Flughafen) | Dunkles Steingrau `#64696C` |
-| 03_Gebaeude | Terrakotta `#AC5438` |
-| 04_Vegetation | Gedämpftes Grün |
+| 1 · Gelände und Sockel | Sand-/Erdbraun `#B8A17C` |
+| 2 · Straßen, Flughafen und Schrift | Steingrau `#64696C` |
+| 3 · Gebäude und Pin | Terrakotta `#AC5438` |
+| 4 · Vegetation | Grün `#637D46` |
 
-**`Cusco_P1S_AMS.3mf` ist die empfohlene Datei.** Sie wurde mit Bambu Studio
-2.8.2.61 exportiert, enthält das P1S-Profil mit 0,4-mm-Düse, vier Farbzuordnungen,
-0,16-mm-Schichten und die geprüfte Platzierung des Spülturms. Als Projekt öffnen,
-eigene Filamente/AMS-Slots zuordnen und slicen. Es wird kein vorgefertigter
-G-Code ungeprüft an einen Drucker gesendet.
+PLA, 0,16-mm-Schichten, drei Wände, 12 % Gyroid, fünf Deck- und vier Bodenschichten,
+Deckschale mindestens 1 mm, automatische Baumstützen aktiviert. Im geprüften
+Probeschnitt werden keine Stützbahnen erzeugt. Füllschichten kombinieren und Spülen in
+die Füllung sind aktiviert; innere Füllbahnbreite 0,45 mm. Vier kompatible, deckende
+PLA-Filamente verwenden. Der Spülturm benötigt seitlich Platz; die geprüfte
+Anordnung ist im Projekt gespeichert.
+
+Der vollständige Probeschnitt mit Bambu Studio 2.8.2.61 ergibt **29 h 14 min 43 s**, **317,62 g PLA**, 153 Schichten und 353 Filamentwechsel.
+Das Plattenergebnis enthält keine Warnmeldung; alle vier Teile wurden ohne
+Mesh-Reparaturen importiert. Ohne automatische Stützerkennung meldet Bambu
+mögliche schwebende Bereiche; die vollständige automatische Stützberechnung
+erzeugt keine Stützbahnen. Die unabhängige Prüfung der STL-Schichten besteht
+ebenfalls. Die automatische Erkennung bleibt im Profil aktiv. Es handelt sich
+um Slicer-Schätzungen.
+**Ein physischer Probedruck wurde noch nicht durchgeführt.**
+
+## Prüfen und Alternativen
+
+`validation.json` enthält geschlossene Farbvolumen, konsistente Normalen,
+paarweise Schnittvolumen, einen zusammenhängenden Gesamtkörper und horizontale
+Prüfschnitte in 0,16-mm-Abständen. Gebäudequellen, Straßenprioritäten,
+Schriftfläche und Pin sind dokumentiert; Bambu-Ergebnis und SHA-256-Prüfsummen
+gehören zur fertig paketierten Fassung.
+
+`building_coverage_comparison.json` vergleicht drei zuvor lückenhafte Viertel.
+`city_density_comparison.json` enthält die Rasterflächen; `print_time_comparison.json`
+bewahrt die bisherigen Druckzeitvergleiche. Die ungeprüfte Zwischenvorschau mit
+dichteren OSM-Blöcken ist dort ausdrücklich kein zusätzlicher Druckbenchmark.
 
 `Cusco_AMS_4_Farben.3mf` ist die neutrale Geometriealternative ohne vollständiges
-Druckprofil. STL-Dateien speichern selbst keine Farben.
-Alternativ alle vier nummerierten STL gemeinsam als **ein Objekt mit mehreren
-Teilen** importieren. Teile nicht einzeln auf das Druckbett absenken.
-`Cusco_einfarbig.stl` ist die boolesch vereinigte Einfarb-Version.
-Die erhabene Schrift ist auch in der Einfarb-Version geometrisch enthalten.
+Druckprofil. Alle vier nummerierten STL gemeinsam als **ein Objekt mit mehreren
+Teilen** importieren und nicht einzeln auf das Druckbett absenken. STL speichern
+keine Farben. `Cusco_einfarbig.stl` enthält das vereinigte Modell einschließlich
+Schrift und Pin. Das alternative STL-Archiv enthält diese Druckhinweise.
 
-PLA, P1S, 0,4-mm-Düse: 0,16-mm-Schichten, 3 Wände, 12 % Gyroid, 5 Deck- und
-4 Bodenschichten, Deckschale mindestens 1 mm, keine Stützen.
-Füllschichten kombinieren und Spülen in die innere Füllung sind aktiviert.
-Vier kompatible, **deckende** PLA-Filamente verwenden und
-die tatsächlichen AMS-Slots in Bambu Studio zuordnen. Bei Materialwechsel
-passende Filamentprofile wählen und erneut slicen. Der Spülturm benötigt
-seitlich Platz; die native Projektdatei enthält die geprüfte Anordnung.
-
-Der vollständige Probeschnitt mit Bambu Studio 2.8.2.61 endete erfolgreich,
-ohne Warnmeldung im Plattenergebnis: 150 Druckschichten, 349 Filamentwechsel,
-ca. 25 h 12 min und 308 g PLA einschließlich Spülabfall. Das sind Schätzungen
-des mitgelieferten Profils; andere Filamente und Einstellungen verändern sie.
-Die vier Teile wurden ohne Mesh-Reparaturen importiert. Ein physischer
-Probedruck wurde nicht durchgeführt.
-
-## Druckzeit und sichtbare Qualität
-
-Die aktuelle Fassung mit zusätzlichen Straßenverbindungen und WorldCover-
-Vegetation benötigt geschätzt **25 h 12 min 02 s und 307,96 g PLA**. Gegenüber
-der letzten Fassung (23 h 01 min 38 s, 297,19 g) sind das **2 h 10 min und
-10,8 g mehr**. Die vollständigere Farbverteilung verursacht mehr Farbwechsel
-und Druckaufwand. Gegenüber dem ursprünglichen Projekt (23 h 56 min 47 s)
-ist die neue Fassung etwa 1 h 15 min langsamer. Die inneren Druckoptimierungen
-bleiben aktiviert. `print_time_comparison.json` enthält alle acht Varianten.
-
-Zusätzliche Probeschnitte vom 26. September 2026 wurden **nicht übernommen**:
-
-- Ein grüner innerer Kern bei geschützten braunen Außenflächen benötigt
-  25 h 22 min 08 s und 304,03 g: rund zehn Minuten langsamer. Die sichtbaren
-  Flächen waren bei 17.486 Prüfpunkten aus sechs Richtungen identisch.
-- 0,60 statt 0,45 mm breite innere Füllbahnen benötigen 25 h 10 min 43 s
-  und 312,25 g: lediglich 79 Sekunden schneller, aber 4,3 g mehr Filament.
-- Für die vorhandenen Farben je Schicht erreicht die automatische Reihenfolge
-  bereits das Minimum aus Wechselzahl und unveränderter Spülmatrix.
-
-Das ausgelieferte Profil behält **0,45 mm Füllbahnbreite** und die bisherige
-Materialaufteilung im Inneren. Die vollständigen Ergebnisse sind im Abschnitt
-`optimization_trials_2026_09_26` der `print_time_comparison.json` dokumentiert.
-Ein großer Zeitgewinn ohne sichtbare Änderungen ist damit nicht belegt.
-
-Der 16-mm-Schriftstreifen entfällt vollständig. Der ursprüngliche Landschaftsausschnitt
-bleibt erhalten. Die Straßenkontakte und die Vegetationsverteilung wurden
-überarbeitet; Gebäudehöhen bleiben schematisch. Nur an der neuen Vorderkante wird das Geländeraster angeschnitten.
-Für die Schrift ist eine kleine freie Geländeoberfläche innerhalb des Modells
-eingeebnet; die Buchstaben stehen waagerecht und leicht erhaben darauf.
-
-Die sichtbaren Schichten bleiben 0,16 mm fein, Wandzahl und
-Oberflächengeschwindigkeiten bleiben unverändert. Kombinierte Füllschichten
-und Spülen in die Füllung betreffen das Innere. Die Farbeinbettung unter dem
-Gelände ist von 0,80 auf 0,64 mm reduziert; sichtbare Form und Farbgrenzen
-bleiben dabei gleich. Deckendes PLA verwenden: Mischfarben im Inneren können
-bei durchscheinenden Filamenten sichtbar werden. Die Farbdurchdeckung der
-neuen Einbettung ist physisch noch nicht geprüft.
-
-349 Farbwechsel und rund 8 h 11 min Spülzeit begrenzen die Ersparnis.
-Eine drastisch kürzere Druckzeit bei gleicher Vierfarb-Darstellung ist mit
-diesen Tests nicht belegt. Gröbere Schichten oder weniger Farben ändern die
-sichtbare Qualität. Spülmengen wurden nicht manuell reduziert.
-
-## Prüfung und Reproduktion
-
-`validation.json` dokumentiert Kachelnaht, ungültige Höhenwerte, geschlossene
-Farbvolumen, Normalenausrichtung, Schnittvolumen, Zusammenhalt und horizontale
-Schnitte in 0,16-mm-Abständen. Numerische Nullvolumen-Artefakte der booleschen
-Vereinigung werden aus der Einfarb-Version entfernt.
-Zusätzlich werden die Landbedeckungsquelle samt Prüfsumme und Klassenanteilen
-sowie der Erhalt der Straßenrasterzellen und Straßenverbindungen geprüft.
-
-```bash
-MPLCONFIGDIR=/tmp/cusco-mpl .venv-model/bin/python -m unittest test_map_raster.py
-MPLCONFIGDIR=/tmp/cusco-mpl .venv-model/bin/python build_print_model.py
-blender -b --factory-startup -t 8 --python render_print_model.py
-```
-
-`build_print_model.py` erzeugt die Druckdateien. `render_print_model.py` importiert
-exakt diese vier STL-Dateien in Blender und rendert mit Cycles/CPU. Die PNGs
-sind echte Mesh-Renderings; Beleuchtung verändert den Farbeindruck. Sie zeigen
-die Form, nicht die Extrusionsbahnen. Die Szene liegt als `Cusco_Render.blend` vor.
-
-Python benötigt numpy, scipy, shapely, trimesh, manifold3d, pillow, mapbox-earcut,
-matplotlib und rasterio (Versionen in `requirements-print.txt`). Diese sind in `.venv-model` installiert.
+Die ergänzten Grundrisse wurden automatisch aus Bildern erkannt und können Fehler
+oder Auslassungen enthalten. Für die übernommenen Zusatzgrundrisse ist kein
+Konfidenzwert angegeben; unbekannte Werte werden nicht als hohe Sicherheit gewertet.
+WorldCover dient zur Abdeckungsprüfung und Vegetationsfarbe, nicht zum Erfinden
+einzelner Häuser. Dekoratives Modell, keine Vermessungsgrundlage.
 
 ## Daten und Attribution
 
-Höhendaten: [AWS Terrain Tiles / Mapzen](https://registry.opendata.aws/terrain-tiles/),
-SRTM-basierte Skadi-HGT-Kacheln, Abruf September 2026; etwa 30 m Quellraster.
-Straßen, Gebäude und Vegetation: © [OpenStreetMap-Mitwirkende](https://www.openstreetmap.org/copyright),
-[ODbL](https://opendatacommons.org/licenses/odbl/1-0/), Overpass-Abfragen vom
-13. September 2026. Die lokale Auswahl enthält Wege und einzelne Baumknoten;
-komplexe Multipolygon-Relationen wurden nicht zusätzlich abgefragt.
-Flughafengeometrien: ergänzende Overpass-Abfrage vom 24. September 2026,
-Server-Datenstand 15. Juli 2026; Abfrage und Geometrien in
-`data/cusco_airport.json`, ebenfalls ODbL.
-Landbedeckung: [Zanaga et al. (2022), ESA WorldCover 10 m 2021 v200](https://doi.org/10.5281/zenodo.7254221),
-[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-© ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium.
-Die Kacheln S15W075 und S15W072 wurden auf den Modellausschnitt zugeschnitten;
-Quellen und Prüfsummen stehen in `data/cusco_worldcover_2021.json`.
-`prepare_landcover.py` reproduziert den Ausschnitt.
-Schrift: DejaVu Sans Bold. Dekoratives Modell, keine Vermessungsgrundlage.
+- Gelände: [AWS Terrain Tiles / Mapzen](https://registry.opendata.aws/terrain-tiles/), SRTM-basierte Skadi-HGT-Kacheln S14W073 und S14W072; Abruf September 2026.
+- Straßen, Gebäude und kartierte Vegetation: © [OpenStreetMap-Mitwirkende](https://www.openstreetmap.org/copyright), [ODbL](https://opendatacommons.org/licenses/odbl/1-0/). Overpass-Daten vom 13. September 2026; Flughafenabfrage vom 24. September, Server-Datenstand 15. Juli 2026.
+- Zusätzliche Grundrisse: [Microsoft Global ML Building Footprints](https://github.com/microsoft/GlobalMLBuildingFootprints/), Stand 13. August 2026, [CDLA Permissive 2.0](https://cdla.dev/permissive-2-0/). Cusco-Kachel `210031023`; Download-URL, Filter und Prüfsummen in `data/cusco_buildings_ms.json`; vollständiger Lizenztext in `data/CDLA-Permissive-2.0.txt`.
+- Landbedeckung: [ESA WorldCover 2021 v200, Zanaga et al.](https://doi.org/10.5281/zenodo.7254221), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). © ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium. Kacheln S15W075 und S15W072; Quellen und Prüfsummen in `data/cusco_worldcover_2021.json`.
+- Schrift: DejaVu Sans Bold.

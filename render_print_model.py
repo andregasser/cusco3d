@@ -1,5 +1,5 @@
 """Actual STL rendering with Blender Cycles on CPU. No reconstructed geometry."""
-import bpy, json, math
+import bpy, json, math, argparse, sys
 from pathlib import Path
 from mathutils import Vector
 
@@ -7,7 +7,13 @@ ROOT=Path(__file__).resolve().parent
 OUT=ROOT/'output/print_v2'
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
-validation=json.loads((OUT/'validation.json').read_text())
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--report',type=Path,default=OUT/'validation.json')
+args=parser.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
+validation=json.loads(args.report.read_text())
+# A staged geometry report also supports previews while full validation runs.
+if 'report' in validation:
+    validation=validation['report']
 palette=[c.lstrip('#') for c in validation['colors'].values()]
 objects=[]
 def linear(c):
@@ -66,4 +72,14 @@ target=Vector(((bounds[0]+bounds[3])*.0005-.100,
 cam.location=target+Vector((.005,-.065,.095)); aim(cam,target); cam.data.ortho_scale=.050
 scene.render.resolution_x=1600; scene.render.resolution_y=800
 scene.render.filepath=str(OUT/'Cusco_Beschriftung.png')
+bpy.ops.render.render(write_still=True)
+# Close-up of the actual printed marker and surrounding city blocks.
+pin=validation['location_pin']
+px,py=pin['center_xy_mm']
+target=Vector((px*.001-.100,py*.001-.100,
+               (pin['surface_reference_z_mm']+2.5)*.001))
+cam.location=target+Vector((.010,-.028,.025)); aim(cam,target)
+cam.data.ortho_scale=.023
+scene.render.resolution_x=1400; scene.render.resolution_y=1000
+scene.render.filepath=str(OUT/'Cusco_Pin.png')
 bpy.ops.render.render(write_still=True)

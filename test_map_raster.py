@@ -11,6 +11,56 @@ import build_print_model as model
 
 
 class MapRasterTests(unittest.TestCase):
+    def test_building_priority_preserves_main_roads_and_minor_core(self):
+        raw=np.zeros((15,15),bool); raw[6:9,6:9]=True
+        roads=np.zeros_like(raw); roads[:,5:9]=True; roads[2:5,:]=True
+        main=np.zeros_like(raw); main[2:5,:]=True
+        core=np.zeros_like(raw); core[:,6:8]=True
+        retained=model.prioritize_buildings(raw,roads,main,core)
+        self.assertTrue(retained[main].all())
+        self.assertTrue(retained[core].all())
+        self.assertFalse(retained[7,8])
+
+    def test_supplement_deduplicates_overlap_without_discarding_neighbours(self):
+        from prepare_buildings import is_duplicate
+        from shapely.geometry import box
+        existing=[box(0,0,1,1)]
+        self.assertTrue(is_duplicate(box(.1,.1,1.1,1.1),existing))
+        self.assertFalse(is_duplicate(box(.9,0,1.9,1),existing))
+
+    def test_terrain_refinement_preserves_original_diagonal(self):
+        # A saddle distinguishes triangle interpolation from bilinear smoothing.
+        coarse=np.array([[0.,8.],[4.,0.]])
+        fine=model.refine_terrain(coarse)
+        np.testing.assert_array_equal(fine[::2,::2],coarse)
+        self.assertEqual(fine[1,1],6.)
+        self.assertEqual(fine[0,1],4.)
+
+    def test_buildings_do_not_grow_across_road_barrier(self):
+        raw=np.zeros((30,30),bool); raw[15,12]=True
+        roads=np.zeros_like(raw); roads[:,14:17]=True
+        with patch.object(model,'report',{}):
+            grouped=model.group_buildings(raw,roads)
+        self.assertTrue(grouped.any())
+        self.assertFalse((grouped&roads).any())
+        self.assertFalse(grouped[:,17:].any())
+
+    def test_building_caps_are_flat_above_sloping_ground(self):
+        y,x=np.mgrid[:9,:9]; ground=4.+x*.13+y*.07
+        mat=np.zeros((8,8),np.uint8); mat[2:5,2:5]=2
+        with patch.object(model,'report',{}):
+            roofs=model.building_roof_heights(ground,mat)
+        expected=ground[2:6,2:6].max()+model.BUILDING_RISE
+        np.testing.assert_allclose(roofs[2:6,2:6],expected)
+        np.testing.assert_array_equal(roofs[0],ground[0])
+        with patch.object(model,'SIZE',8.):
+            solids=[model.solid_for_material(k,x.astype(float),y.astype(float),
+                        roofs if k==2 else ground,ground-.64,mat) for k in (0,2)]
+        self.assertLess(abs((solids[0]^solids[1]).volume()),1e-6)
+        joined=solids[0]+solids[1]
+        self.assertEqual(len(joined.decompose()),1)
+        self.assertTrue(model.as_mesh(joined).is_watertight)
+
     def test_diagonal_roads_connect_without_removing_source(self):
         mat = np.zeros((9, 9), dtype=np.uint8)
         for i in range(2, 7):
@@ -21,6 +71,18 @@ class MapRasterTests(unittest.TestCase):
         self.assertEqual(ndi.label(mat == 1)[1], 1)
         self.assertFalse(mat[[0, -1], :].any())
         self.assertFalse(mat[:, [0, -1]].any())
+
+    def test_joined_body_rejects_detached_geometry_but_discards_numerical_debris(self):
+        body=model.trimesh.creation.box()
+        detached=body.copy(); detached.apply_translation((3,0,0))
+        with patch.object(model,'report',{}):
+            with self.assertRaisesRegex(AssertionError,'2 detached pieces'):
+                model.joined_body(model.trimesh.util.concatenate([body,detached]))
+            detached.apply_scale(.0001)
+            joined=model.joined_body(model.trimesh.util.concatenate([body,detached]))
+            self.assertAlmostEqual(joined.volume,body.volume)
+            self.assertEqual(model.report['connected_components'],1)
+            self.assertEqual(model.report['boolean_zero_volume_fragments_removed'],1)
 
     def test_mixed_contacts_preserve_roads_and_converge(self):
         rng = np.random.default_rng(12)
