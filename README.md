@@ -1,7 +1,5 @@
 # Cusco · Print the Andes
 
-![Cusco – aktuelle Modellfassung mit Infotafel und ohne Pins](hero.png)
-
 ![Gesamtansicht der aktuellen Druckgeometrie](output/print_v2/Cusco_Gesamtansicht.png)
 
 20 × 20 km rund um Cusco als vierfarbiges Relief für den Bambu Lab P1S.
@@ -72,7 +70,6 @@ MPLCONFIGDIR=/tmp/cusco-mpl .venv-model/bin/python build_print_model.py
 .venv-model/bin/python check_print_overhangs.py
 .venv-model/bin/python prepare_test_coupon.py
 blender -b --factory-startup -t 8 --python render_print_model.py
-blender -b --factory-startup -t 8 --python render_hero.py
 .venv-model/bin/python prepare_bambu_check.py
 ```
 

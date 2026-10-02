@@ -24,3 +24,6 @@ __pycache__/
 !/output/print_v2/Druckhinweise.md
 !/output/print_v2/Cusco_Testdruck_P1S.3mf
 !/output/print_v2/test_coupon_report.json
+
+# Optional local banner; README uses the current model rendering directly.
+/hero.png
