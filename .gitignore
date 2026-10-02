@@ -12,7 +12,6 @@ __pycache__/
 !/output/print_v2/Cusco_Gesamtansicht.png
 !/output/print_v2/Cusco_Beschriftung.png
 !/output/print_v2/Cusco_Flughafen.png
-!/output/print_v2/Cusco_Pin.png
 !/output/print_v2/Cusco_Stadt.png
 !/output/print_v2/Cusco_Stadt_Vorher.png
 !/output/print_v2/print_time_comparison.json
@@ -23,3 +22,5 @@ __pycache__/
 !/output/print_v2/Cusco_Flughafenumfeld_*.png
 !/output/print_v2/validation.json
 !/output/print_v2/Druckhinweise.md
+!/output/print_v2/Cusco_Testdruck_P1S.3mf
+!/output/print_v2/test_coupon_report.json

@@ -61,6 +61,38 @@ class MapRasterTests(unittest.TestCase):
         self.assertEqual(len(joined.decompose()),1)
         self.assertTrue(model.as_mesh(joined).is_watertight)
 
+    def test_height_tiers_preserve_flat_roofs_and_clear_slopes(self):
+        y,x=np.mgrid[:51,:51]; ground=4.+x*.02+y*.03
+        mat=np.zeros((50,50),np.uint8)
+        groups=[(slice(2,4),slice(2,4)),(slice(8,16),slice(8,16)),
+                (slice(25,43),slice(25,43))]
+        for rows,cols in groups:mat[rows,cols]=2
+        with patch.object(model,'report',{}):
+            roofs=model.building_roof_heights(ground,mat)
+        for (rows,cols),rise in zip(groups,[.48,.64,.80]):
+            vertices=(slice(rows.start,rows.stop+1),slice(cols.start,cols.stop+1))
+            np.testing.assert_allclose(roofs[vertices],ground[vertices].max()+rise)
+
+    def test_information_card_preserves_mapped_features_and_points_north(self):
+        y,x=np.meshgrid(np.arange(201.),np.arange(201.),indexing='ij')
+        ground=4.+x*.02+y*.03;upper=ground.copy();lower=ground-.64
+        mat=np.zeros((200,200),np.uint8);mat[:,100]=1;mat[20:30,20:30]=2
+        protected=np.isin(mat,[1,2]);old=mat.copy()
+        with patch.multiple(model,DX=1.,DY=1.,report={}):
+            left,bottom,level=model.information_surface(x,y,upper,lower,mat)
+            decoration=model.information_solid(left,bottom,level)
+            self.assertEqual(model.report['scale']['north_direction'],'positive model Y')
+            self.assertEqual(model.report['pins']['count'],0)
+        np.testing.assert_array_equal(mat[protected],old[protected])
+        mesh=model.as_mesh(decoration)
+        self.assertTrue(mesh.is_watertight)
+        self.assertTrue(mesh.is_winding_consistent)
+        self.assertGreater(mesh.bounds[0,0],left)
+        self.assertLess(mesh.bounds[1,0],left+38)
+        self.assertGreater(mesh.bounds[0,1],bottom)
+        self.assertLess(mesh.bounds[1,1],bottom+18)
+        self.assertAlmostEqual(mesh.bounds[1,2],level+model.LABEL_RISE,places=5)
+
     def test_diagonal_roads_connect_without_removing_source(self):
         mat = np.zeros((9, 9), dtype=np.uint8)
         for i in range(2, 7):
@@ -115,7 +147,7 @@ class MapRasterTests(unittest.TestCase):
                                width=4, height=4, count=1, dtype='uint8',
                                crs='EPSG:4326', transform=transform) as dst:
                 dst.write(classes, 1)
-            with patch.multiple(model, ROOT=root, NX=4, NY=4, SAMPLING_APRON=0., DY=50., report={}):
+            with patch.multiple(model, ROOT=root, NX=4, NY=4, SAMPLING_APRON=0., DX=50., DY=50., report={}):
                 mask = model.landcover()
             expected = np.zeros((4, 4), dtype=bool)
             expected[2:, :2] = True

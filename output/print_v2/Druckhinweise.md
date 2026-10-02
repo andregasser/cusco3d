@@ -1,72 +1,54 @@
 # Cusco-Relief für Bambu Lab P1S
 
-Aktuell ist ausschließlich `output/print_v2/Cusco_P1S_AMS.3mf`. Die Datei enthält
-das native P1S-Profil für die 0,4-mm-Düse und vier Farbzuordnungen. Als **Projekt**
-öffnen, eigene Filamente und AMS-Slots zuordnen und neu slicen. Die Datei enthält
-keinen vorgefertigten G-Code. Dateien direkt unter `output/` sind alte Prototypen.
+Cusco_P1S_AMS.3mf als Projekt öffnen, vier PLA-Filamente und AMS-Slots zuordnen, neu slicen.
+Cusco_Testdruck_P1S.3mf enthält den separaten 40 × 40-mm-Probedruck mit denselben Farben und Druckprofilen.
+Beide Projekte enthalten keinen vorgefertigten G-Code. Ein physischer Probedruck steht noch aus.
 
-## Modell und ergänzte Stadt
+## Überarbeitete Darstellung
 
-- 200 × 200 × 24,53 mm; 20 × 20 km Landschaft, horizontal 1:100.000, Höhen 1,6-fach überhöht.
-- Ebene Unterseite, Sockelbasis 4 mm vor der 0,64 mm tiefen Farbeinbettung.
-- Die ursprünglichen Geländedreiecke werden auf rund 14 m Rasterweite unterteilt; die Geländegrundlage und ihre Glättung bleiben erhalten.
-- OSM wird durch 81.444 Microsoft-Grundrisse ergänzt. 21.874 stark überlappende Dubletten sowie 76 sehr kleine oder unzureichend bewertete Geometrien wurden ausgesondert. Verbleibende Überlappungen werden im Raster vereinigt; die Zahl ist keine Zählung neuer Einzelhäuser.
-- Die Modellfläche für Gebäude beträgt rund 3.642 mm² statt 2.344 mm² in der letzten Vorschau. Etwa 4.938 getrennte Häusergruppen erhalten waagerechte Dächer und senkrechte Wände. Dächer liegen 1,20 mm über dem höchsten Oberflächenpunkt des jeweiligen Blocks; Höhen sind schematisch.
-- Hauptstraßen und Flughafen sind geschützt. Nebenstraßen behalten in dichten Vierteln einen rund 0,27 mm breiten Rasterkern; ihre zuvor überzeichneten Randbereiche weichen der Bebauung. Sehr schmale Farbdetails können im Slicer weiter vereinfacht werden. Wohnstraßen außerhalb solcher Engstellen sind bis etwa 0,41 mm, Hauptstraßen rund 0,55 mm breit.
-- Startbahn, 18 Rollwegsegmente und zwei Vorfelder bleiben enthalten. Startbahn rund 1,09 mm, Rollwege rund 0,55 mm breit; 0,40 mm Höhenaufschlag. Straßenaufschlag 0,32 mm.
-- WorldCover und OSM färben rund 75 % der Draufsicht grün, ohne zusätzliche Vegetationshöhe. Die Daten sind eine Landbedeckungsklassifikation von 2021.
-- „Cusco“ steht waagerecht auf einer etwa 30 × 9 mm großen internen Schriftfläche: 28,8 × 7,5 mm Schriftbild, 0,64 mm erhaben, 0,48 mm eingebettet. Ein neu hinzugekommenes Quellrasterfeld wird zugunsten dieser dekorativen Fläche ausgespart und im Prüfbericht ausgewiesen.
-- Standort-Pin an **−13.521908269187426, −71.98500062613564**, Modellposition X = 81,016 / Y = 111,178 mm ab der südwestlichen Ecke. 5 mm über der höchsten unmittelbaren Umgebung, 1,8 mm Schaft und 3,2 mm abgerundeter Kopf; fest eingebettet und mit 45°-Schulter.
+- Häusergruppen haben waagerechte Dächer und senkrechte Wände. Der Höhenaufschlag beträgt **0,48 / 0,64 / 0,80 mm**, abgestuft nach Grundfläche unter 1 / unter 4 / ab 4 mm². Diese Abstufung ist schematisch, keine gemessene Gebäudehöhe.
+- Wald, Buschland und Gras bleiben grün; WorldCover-Ackerland erhält die Erdfarbe. Ein rund 0,95-mm-Mehrheitsfilter beruhigt die Vegetationsgrenzen. OSM-Grünflächen bleiben berücksichtigt. Grün belegt aktuell rund **70.9 %** der Rasterfläche; Vegetation erhöht das Gelände nicht.
+- Hauptstraßen unterscheiden sich durch etwa 0,55–0,82 mm Rasterbreite von Nebenstraßen. Der Straßenaufschlag beträgt 0,24 mm. Dichte Viertel behalten einen etwa 0,27-mm-Nebenstraßenkern. Die 0,4-mm-Düse kann diese Details vereinfachen.
+- Flughafen mit Startbahn, 18 Rollwegsegmenten und zwei Vorfeldern; 0,40 mm Aufschlag.
+- Eine kleine **38 × 18 mm große Infotafel oben im Gelände** zeigt **Cusco**, **Scale 1:100 000**, **3200–4430 m** und **above sea level**. Ihre Position nahe einer Ecke wird automatisch ohne Straßen oder Gebäude im reservierten Bereich gewählt. Die Schrift liegt 0,64 mm über einer braunen, waagerechten Fläche.
+- Der Nordpfeil mit **N** gehört zur Infotafel. Norden entspricht +Y. Die mit **1 km** beschriftete 10-mm-Maßstabsleiste auf der Tafel entspricht einem Kilometer. Die gerundete Höhenangabe beschreibt Meter über dem Meeresspiegel.
+- Alle Standort-Pins und Landmarkenringe sind entfernt. Die Seitenkanten tragen keine Beschriftung.
 
-## Farben und Profil
+![Infotafel auf dem Gelände](Cusco_Beschriftung.png)
 
-| Teil / AMS-Zuordnung | Farbe |
-| --- | --- |
-| 1 · Gelände und Sockel | Sand-/Erdbraun `#B8A17C` |
-| 2 · Straßen, Flughafen und Schrift | Steingrau `#64696C` |
-| 3 · Gebäude und Pin | Terrakotta `#AC5438` |
-| 4 · Vegetation | Grün `#637D46` |
+## Druck und Prüfung
 
-PLA, 0,16-mm-Schichten, drei Wände, 12 % Gyroid, fünf Deck- und vier Bodenschichten,
-Deckschale mindestens 1 mm, automatische Baumstützen aktiviert. Im geprüften
-Probeschnitt werden keine Stützbahnen erzeugt. Füllschichten kombinieren und Spülen in
-die Füllung sind aktiviert; innere Füllbahnbreite 0,45 mm. Vier kompatible, deckende
-PLA-Filamente verwenden. Der Spülturm benötigt seitlich Platz; die geprüfte
-Anordnung ist im Projekt gespeichert.
+Vier kompatible, deckende PLA-Filamente zuordnen und die 3MF **als Projekt** öffnen.
+0,4-mm-Düse, 0,16-mm-Schichten, drei Wände, 12 % Gyroid, fünf Deck- und vier Bodenschichten.
+Automatische Baumstützerkennung, Spülen in die Füllung und kombinierte Füllschichten bleiben aktiviert.
 
-Der vollständige Probeschnitt mit Bambu Studio 2.8.2.61 ergibt **29 h 14 min 43 s**, **317,62 g PLA**, 153 Schichten und 353 Filamentwechsel.
-Das Plattenergebnis enthält keine Warnmeldung; alle vier Teile wurden ohne
-Mesh-Reparaturen importiert. Ohne automatische Stützerkennung meldet Bambu
-mögliche schwebende Bereiche; die vollständige automatische Stützberechnung
-erzeugt keine Stützbahnen. Die unabhängige Prüfung der STL-Schichten besteht
-ebenfalls. Die automatische Erkennung bleibt im Profil aktiv. Es handelt sich
-um Slicer-Schätzungen.
-**Ein physischer Probedruck wurde noch nicht durchgeführt.**
+| AMS | Teile | Farbe |
+| --- | --- | --- |
+| 1 | Gelände und Sockel | Erdbraun #B8A17C |
+| 2 | Straßen, Flughafen und Infotafel | Steingrau #64696C |
+| 3 | Gebäude | Terrakotta #AC5438 |
+| 4 | Vegetation | Grün #637D46 |
 
-## Prüfen und Alternativen
+Der neue vollständige Probeschnitt mit Bambu Studio 2.8.2.61 schätzt **28 h 10 min 31 s**, **315.54 g PLA**, **355 Farbwechsel**.
+Diese Werte gehören zur überarbeiteten Geometrie. Eigene Filamente und Profile können sie verändern.
+Das Projekt enthält keinen vorgefertigten G-Code.
 
-`validation.json` enthält geschlossene Farbvolumen, konsistente Normalen,
-paarweise Schnittvolumen, einen zusammenhängenden Gesamtkörper und horizontale
-Prüfschnitte in 0,16-mm-Abständen. Gebäudequellen, Straßenprioritäten,
-Schriftfläche und Pin sind dokumentiert; Bambu-Ergebnis und SHA-256-Prüfsummen
-gehören zur fertig paketierten Fassung.
+Vier geschlossene Farbvolumen, konsistente Normalen, paarweise Schnittvolumen,
+ein zusammenhängender Gesamtkörper und alle horizontalen Schichten wurden geprüft.
+Die einfarbige Alternative wird mit 0,001 mm Toleranz vereinfacht und nach STL-Rückimport erneut geprüft.
+Der Prüfbericht steht in [validation.json](validation.json).
 
-`building_coverage_comparison.json` vergleicht drei zuvor lückenhafte Viertel.
-`city_density_comparison.json` enthält die Rasterflächen; `print_time_comparison.json`
-bewahrt die bisherigen Druckzeitvergleiche. Die ungeprüfte Zwischenvorschau mit
-dichteren OSM-Blöcken ist dort ausdrücklich kein zusätzlicher Druckbenchmark.
+**Noch kein physischer Probedruck.** Zuerst den separaten 40 × 40-mm-Ausschnitt drucken.
+Er zeigt dichte Bebauung, Hang, schmale Straßen im unveränderten Maßstab.
+Farbtrennung, Straßenkontinuität, Gebäudehaftung prüfen.
+Die Infotafel ist außerhalb dieses Stadtausschnitts; sie zusätzlich in der Schichtvorschau kontrollieren.
 
-`Cusco_AMS_4_Farben.3mf` ist die neutrale Geometriealternative ohne vollständiges
-Druckprofil. Alle vier nummerierten STL gemeinsam als **ein Objekt mit mehreren
-Teilen** importieren und nicht einzeln auf das Druckbett absenken. STL speichern
-keine Farben. `Cusco_einfarbig.stl` enthält das vereinigte Modell einschließlich
-Schrift und Pin. Das alternative STL-Archiv enthält diese Druckhinweise.
+## Alternativen
 
-Die ergänzten Grundrisse wurden automatisch aus Bildern erkannt und können Fehler
-oder Auslassungen enthalten. Für die übernommenen Zusatzgrundrisse ist kein
-Konfidenzwert angegeben; unbekannte Werte werden nicht als hohe Sicherheit gewertet.
-WorldCover dient zur Abdeckungsprüfung und Vegetationsfarbe, nicht zum Erfinden
-einzelner Häuser. Dekoratives Modell, keine Vermessungsgrundlage.
+Cusco_AMS_4_Farben.3mf und Cusco_Testdruck_40mm.3mf enthalten neutrale Mehrteilgeometrie.
+Vier nummerierte STL gemeinsam als ein Objekt mit mehreren Teilen importieren;
+nicht einzeln auf das Druckbett absenken. Cusco_einfarbig.stl enthält den vereinigten Körper.
+Historische Vergleichsberichte sind keine Messwerte der aktuellen Fassung.
 
 ## Daten und Attribution
 

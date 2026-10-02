@@ -1,0 +1,110 @@
+{
+  "crop_xy_mm": [
+    70.0,
+    90.0,
+    110.0,
+    130.0
+  ],
+  "size_xy_mm": [
+    40,
+    40
+  ],
+  "scale_unchanged": true,
+  "features": [
+    "dense city",
+    "hillside",
+    "minor roads"
+  ],
+  "connected_components": 1,
+  "watertight_parts": 4,
+  "source_stl_sha256": {
+    "01_Terrain_Sockel": "27a66cd084fc3eed1398dc5ab07c33ccdef64a3119a25899193b225fdcae6ad6",
+    "02_Strassen_Schrift": "2f71b82681c474e7fc61643bd1114e78656e493db5512110bd4d10e12c77b4d6",
+    "03_Gebaeude": "0445e63bd1ecb9cb47cc047cba012723b5f2dc26858b0a51f02e63db24aac84f",
+    "04_Vegetation": "0bd26a44c78d7aa9faec2da314d77ade7825d640827a1131232355011863ee27"
+  },
+  "bambu_studio": {
+    "error_string": "Success.",
+    "export_time": 1423,
+    "layer_height": 0.1599999964237213,
+    "plate_index": 1,
+    "prepare_time": 528,
+    "return_code": 0,
+    "sliced_plates": [
+      {
+        "feature_type_times": {
+          "Bottom surface": 49.912498474121094,
+          "Bridge": 77.40531921386719,
+          "Custom": 377.7284240722656,
+          "Flush": 11628.025390625,
+          "Gap infill": 0.07914038002490997,
+          "Inner wall": 231.92442321777344,
+          "Internal solid infill": 142.56260681152344,
+          "Outer wall": 2293.22216796875,
+          "Prime tower": 1843.0137939453125,
+          "Sparse infill": 106.23104095458984,
+          "Top surface": 0.2583349645137787,
+          "Travel": 3503.61474609375,
+          "Undefined": 3487.97802734375
+        },
+        "filament_change_times": 138,
+        "filaments": [
+          {
+            "filament_id": "GFL99",
+            "id": 1,
+            "main_used_g": 5.590793132781982,
+            "total_used_g": 18.57929039001465
+          },
+          {
+            "filament_id": "GFL99",
+            "id": 2,
+            "main_used_g": 0.9368593096733093,
+            "total_used_g": 14.741991996765137
+          },
+          {
+            "filament_id": "GFL99",
+            "id": 3,
+            "main_used_g": 1.655723214149475,
+            "total_used_g": 10.826910972595215
+          },
+          {
+            "filament_id": "GFL99",
+            "id": 4,
+            "main_used_g": 0.3832854926586151,
+            "total_used_g": 12.922260284423828
+          }
+        ],
+        "generate_support_material_time": 415,
+        "id": 1,
+        "infill_time": 603,
+        "layer_filament_change": 0,
+        "main_predication": 6378.462890625,
+        "make_perimeters_time": 2387,
+        "obj_cached_cnt": 0,
+        "objects": [
+          {
+            "bbox": {
+              "depth": 40.0,
+              "height": 13.617337226867676,
+              "width": 40.0,
+              "x": 19.0,
+              "y": 28.0,
+              "z": 0.0
+            },
+            "id": 5,
+            "name": "Cusco",
+            "triangle_count": 335176
+          }
+        ],
+        "sliced_time": 6837,
+        "sliced_time_with_cache": 3243,
+        "total_predication": 20240.5625,
+        "triangle_count": 335176,
+        "warning_message": ""
+      }
+    ],
+    "sparse_infill_density": 12.0,
+    "wall_loops": 3
+  },
+  "project_sha256": "dd087472319731a750d916b8cb22ae8f3f6ff29ea67fb3ffec4917935aed0ab8"
+}

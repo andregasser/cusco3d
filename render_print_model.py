@@ -69,17 +69,7 @@ bpy.ops.render.render(write_still=True)
 bounds=validation['lettering']['bounds']
 target=Vector(((bounds[0]+bounds[3])*.0005-.100,
                (bounds[1]+bounds[4])*.0005-.100,(bounds[2]+bounds[5])*.0005))
-cam.location=target+Vector((.005,-.065,.095)); aim(cam,target); cam.data.ortho_scale=.050
+cam.location=target+Vector((.005,-.035,.080)); aim(cam,target); cam.data.ortho_scale=.050
 scene.render.resolution_x=1600; scene.render.resolution_y=800
 scene.render.filepath=str(OUT/'Cusco_Beschriftung.png')
-bpy.ops.render.render(write_still=True)
-# Close-up of the actual printed marker and surrounding city blocks.
-pin=validation['location_pin']
-px,py=pin['center_xy_mm']
-target=Vector((px*.001-.100,py*.001-.100,
-               (pin['surface_reference_z_mm']+2.5)*.001))
-cam.location=target+Vector((.010,-.028,.025)); aim(cam,target)
-cam.data.ortho_scale=.023
-scene.render.resolution_x=1400; scene.render.resolution_y=1000
-scene.render.filepath=str(OUT/'Cusco_Pin.png')
 bpy.ops.render.render(write_still=True)

@@ -1,9 +1,9 @@
 {
-  "measured_date": "2026-09-30",
+  "measured_date": "2026-10-01",
   "slicer_version": "02.08.02.61",
-  "note": "Slicer estimates, not physical prints. Final variant combines OSM and Microsoft footprints, a finer feature raster, flat building roofs and protected minor-road cores. Includes the embedded location pin. Core four-colour print settings are unchanged; automatic tree-support generation is enabled, with no support toolpaths produced in the validated slice. Earlier measurements and optimization trials are historical; the intermediate dense OSM preview was not a validated print benchmark.",
+  "note": "Current final variant: scale_bar_label, measured 2026-10-01. Earlier measurements are historical slicer estimates, not physical prints.",
   "original_project_sha256": "27372b7c9f1c5296115b0f1c7abd66a86e13276b4a85fcca37f8a5c9ec8c9de5",
-  "final_project_sha256": "997374b45a6b15db749a60c761668c08d83c0ce706171a5518434aa3868c7369",
+  "final_project_sha256": "4a5a5ebe7586d2c5ec933c78bd1f1195f9b3665133e42dad7803ede18953edea",
   "unchanged_settings": {
     "layer_height_mm": 0.16,
     "wall_loops": 3,
@@ -15,8 +15,8 @@
     "outer_wall_speed_mm_s": 60,
     "top_surface_speed_mm_s": 70
   },
-  "net_time_saved_seconds": -19075.59375,
-  "net_time_saved_percent": -22.12751781492488,
+  "net_time_saved_seconds": -15223.3359375,
+  "net_time_saved_percent": -17.65893327224047,
   "physical_print_verified": false,
   "measurements": [
     {
@@ -1334,6 +1334,102 @@
         "; HEADER_BLOCK_END",
         ""
       ]
+    },
+    {
+      "name": "readability_revision",
+      "total_estimated_seconds": 102454.984375,
+      "total_filament_g": 317.4883403778076,
+      "filament_changes": 363,
+      "project_sha256": "4e2435b586b02da671eecb1eaf09b8744b79e72867a46b3c5347234b56578a3a",
+      "gcode_header": [
+        "; HEADER_BLOCK_START",
+        "; BambuStudio 02.08.02.61",
+        "; model printing time: 1d 4h 21m 3s; total estimated time: 1d 4h 27m 34s",
+        "; total layer number: 149",
+        "; total filament length [mm] : 59836.04,17367.77,9921.21,19323.62",
+        "; total filament volume [cm^3] : 143922.55,41774.38,23863.31,46478.76",
+        "; total filament weight [g] : 178.46,51.80,29.59,57.63",
+        "; filament_density: 1.24,1.24,1.24,1.24",
+        "; filament_diameter: 1.75,1.75,1.75,1.75",
+        "; max_z_height: 23.88",
+        "; filament: 1,2,3,4",
+        "; support_material_on_wipe_tower: 0",
+        "; HEADER_BLOCK_END",
+        ""
+      ],
+      "note": "Schematic 0.48/0.64/0.80-mm roofs, cropland earth tint, generalized vegetation, road hierarchy, flush front lettering, scale, north arrow, grey pin, cathedral and runway markers."
+    },
+    {
+      "name": "elevation_label",
+      "total_estimated_seconds": 102516.8828125,
+      "total_filament_g": 317.51441192626953,
+      "filament_changes": 363,
+      "project_sha256": "c19223474f2c377e4e5354d77e932428c9528ccf932ef7f200065f16be155816",
+      "gcode_header": [
+        "; HEADER_BLOCK_START",
+        "; BambuStudio 02.08.02.61",
+        "; model printing time: 1d 4h 22m 5s; total estimated time: 1d 4h 28m 36s",
+        "; total layer number: 149",
+        "; total filament length [mm] : 59841.02,17371.61,9921.16,19323.58",
+        "; total filament volume [cm^3] : 143934.51,41783.63,23863.19,46478.66",
+        "; total filament weight [g] : 178.48,51.81,29.59,57.63",
+        "; filament_density: 1.24,1.24,1.24,1.24",
+        "; filament_diameter: 1.75,1.75,1.75,1.75",
+        "; max_z_height: 23.88",
+        "; filament: 1,2,3,4",
+        "; support_material_on_wipe_tower: 0",
+        "; HEADER_BLOCK_END",
+        ""
+      ],
+      "note": "Front base states rounded source terrain elevation range: 3200\u20134430 m \u00fcber Meer."
+    },
+    {
+      "name": "top_information_card",
+      "total_estimated_seconds": 101363.3359375,
+      "total_filament_g": 315.53602409362793,
+      "filament_changes": 355,
+      "project_sha256": "ff0486bf196b6e18babad701d775c55d1e6b22d4555ac1fa45af83cf37cb1137",
+      "gcode_header": [
+        "; HEADER_BLOCK_START",
+        "; BambuStudio 02.08.02.61",
+        "; model printing time: 1d 4h 2m 52s; total estimated time: 1d 4h 9m 23s",
+        "; total layer number: 149",
+        "; total filament length [mm] : 63259.22,13393.27,9955.63,19185.94",
+        "; total filament volume [cm^3] : 152156.26,32214.58,23946.09,46147.60",
+        "; total filament weight [g] : 188.67,39.95,29.69,57.22",
+        "; filament_density: 1.24,1.24,1.24,1.24",
+        "; filament_diameter: 1.75,1.75,1.75,1.75",
+        "; max_z_height: 23.88",
+        "; filament: 1,2,3,4",
+        "; support_material_on_wipe_tower: 0",
+        "; HEADER_BLOCK_END",
+        ""
+      ],
+      "note": "English information card on feature-free terrain near rear-left corner; no sidewall lettering, pins or landmark rings."
+    },
+    {
+      "name": "scale_bar_label",
+      "total_estimated_seconds": 101430.8984375,
+      "total_filament_g": 315.5440082550049,
+      "filament_changes": 355,
+      "project_sha256": "4a5a5ebe7586d2c5ec933c78bd1f1195f9b3665133e42dad7803ede18953edea",
+      "gcode_header": [
+        "; HEADER_BLOCK_START",
+        "; BambuStudio 02.08.02.61",
+        "; model printing time: 1d 4h 3m 59s; total estimated time: 1d 4h 10m 30s",
+        "; total layer number: 149",
+        "; total filament length [mm] : 63259.99,13395.16,9955.60,19185.98",
+        "; total filament volume [cm^3] : 152158.12,32219.15,23946.02,46147.68",
+        "; total filament weight [g] : 188.68,39.95,29.69,57.22",
+        "; filament_density: 1.24,1.24,1.24,1.24",
+        "; filament_diameter: 1.75,1.75,1.75,1.75",
+        "; max_z_height: 23.88",
+        "; filament: 1,2,3,4",
+        "; support_material_on_wipe_tower: 0",
+        "; HEADER_BLOCK_END",
+        ""
+      ],
+      "note": "Top information card; 10-mm scale bar explicitly labelled 1 km."
     }
   ],
   "previous_project_sha256": "ad7006ad427afead90da6a2d9c231d156e511ae3144dcb9544bbb9dbc5e152dd",
@@ -1644,5 +1740,6 @@
     "additional_seconds": 14451.7734375,
     "additional_filament_g": 9.595098495483398,
     "additional_filament_changes": 4
-  }
+  },
+  "previous_final_project_sha256": "997374b45a6b15db749a60c761668c08d83c0ce706171a5518434aa3868c7369"
 }

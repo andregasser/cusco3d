@@ -38,13 +38,11 @@ DLON = 20/(111.32*math.cos(math.radians(LAT)))
 LABEL = 'Cusco'
 NAMES = ['01_Terrain_Sockel', '02_Strassen_Schrift', '03_Gebaeude', '04_Vegetation']
 COLORS = ['#B8A17C', '#64696C', '#AC5438', '#637D46']
-BUILDING_RISE, ROAD_RISE, AIRPORT_RISE = 1.20, .32, .40
+BUILDING_RISE, ROAD_RISE, AIRPORT_RISE = .48, .24, .40
 INLAY_DEPTH = .64  # Four 0.16 mm layers below terrain, plus the visible relief.
 LABEL_RISE, LABEL_DEPTH = .64, .48
 LABEL_WIDTH, LABEL_HEIGHT = 28.8, 7.5
-PIN_LAT, PIN_LON = -13.521908269187426, -71.98500062613564
-PIN_HEIGHT, PIN_SHAFT_RADIUS, PIN_HEAD_RADIUS = 5., .9, 1.6
-ROAD_WIDTHS = {'motorway':.6,'trunk':.6,'primary':.6,'secondary':.5,'tertiary':.5,
+ROAD_WIDTHS = {'motorway':.8,'trunk':.8,'primary':.7,'secondary':.6,'tertiary':.5,
                'residential':.4,'living_street':.4,'unclassified':.4,
                'motorway_link':.4,'trunk_link':.4,'primary_link':.4,
                'secondary_link':.4,'tertiary_link':.4}
@@ -100,44 +98,6 @@ def terrain():
 def xy(p):
     return ((p['lon']-WEST)/DLON*SIZE/DX, (SAMPLING_APRON+(p['lat']-SOUTH)/DLAT*SIZE)/DY)
 
-def location_pin(x,y,upper,lower):
-    """A vertical, embedded marker in the same geographic frame as the map.
-
-    The 45-degree shoulder supports the rounded head without a horizontal
-    overhang. Bound all cells below the head to clear even nearby roof peaks.
-    """
-    col,row=xy({'lat':PIN_LAT,'lon':PIN_LON})
-    px,py=col*DX,row*DY-SAMPLING_APRON
-    r=PIN_HEAD_RADIUS
-    if not (r<px<SIZE-r and r<py<SIZE-r):
-        raise ValueError('Location pin lies outside the model')
-    cols=np.flatnonzero((x[0]>=px-r-DX)&(x[0]<=px+r+DX))
-    rows=np.flatnonzero((y[:,0]>=py-r-DY)&(y[:,0]<=py+r+DY))
-    patch=np.ix_(rows,cols)
-    level=float(upper[patch].max())
-    bottom=float(lower[patch].min())-.48
-    assert bottom>0, 'Pin embedding would reach below the base'
-    shoulder=PIN_HEAD_RADIUS-PIN_SHAFT_RADIUS
-    band=.4
-    stem_top=level+PIN_HEIGHT-r-band-shoulder
-    stem=md.Manifold.cylinder(stem_top-bottom,PIN_SHAFT_RADIUS,
-                              circular_segments=64).translate((0,0,bottom))
-    flare=md.Manifold.cylinder(shoulder,PIN_SHAFT_RADIUS,r,
-                               circular_segments=64).translate((0,0,stem_top))
-    rim=md.Manifold.cylinder(band,r,circular_segments=64).translate((0,0,stem_top+shoulder))
-    dome=md.Manifold.sphere(r,circular_segments=64)^md.Manifold.cube((2*r,2*r,r)).translate((-r,-r,0))
-    dome=dome.translate((0,0,level+PIN_HEIGHT-r))
-    pin=md.Manifold.batch_boolean([stem,flare,rim,dome],md.OpType.Add).translate((px,py,0))
-    assert pin.status()==md.Error.NoError and len(pin.decompose())==1
-    report['location_pin']={'latitude':PIN_LAT,'longitude':PIN_LON,
-      'coordinate_system':'WGS84 latitude/longitude; existing model projection',
-      'center_xy_mm':[px,py],'surface_reference_z_mm':level,
-      'height_above_local_surface_max_mm':PIN_HEIGHT,
-      'shaft_diameter_mm':2*PIN_SHAFT_RADIUS,'head_diameter_mm':2*r,
-      'shoulder_angle_degrees':45,'embedded_bottom_z_mm':bottom,
-      'material':NAMES[2],'color':COLORS[2],'bounds':list(pin.bounding_box())}
-    return pin
-
 def landcover():
     """Aggregate categorical WorldCover data to the terrain cells, north up first."""
     source=ROOT/'data/cusco_worldcover_2021.tif'
@@ -155,9 +115,16 @@ def landcover():
       'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
       'resampling':'mode, then north-up rows reversed into south-to-north mesh',
       'class_cells':{str(k):int(v) for k,v in zip(values,counts)},
-      'green_classes':[10,20,30,40,90,95,100],'unclassified_interior_cells':0,
+      'green_classes':[10,20,30,90,95,100],'unclassified_interior_cells':0,
       'vegetation_rise_mm':0,'note':'Land-cover classes, not seasonal or satellite RGB colours.'}
-    return np.isin(classes,[10,20,30,40,90,95,100])
+    mask=np.isin(classes,[10,20,30,90,95,100])
+    # Cropland keeps the earth colour; a majority filter suppresses sub-nozzle
+    # fragments without inventing forest or deriving colours from elevation.
+    window=(max(1,round(.95/DY)),max(1,round(.95/DX)))
+    mask=ndi.uniform_filter(mask.astype(float),size=window,mode='nearest')>=.5
+    report['landcover']['generalization']={'majority_window_cells':list(window),
+      'cropland_material':'earth','window_mm':[window[1]*DX,window[0]*DY]}
+    return mask
 
 def repair_material_contacts(mat):
     """Resolve diagonal-only contacts by filling one cell; never erase roads.
@@ -267,15 +234,7 @@ def raster_layers():
     report['supplemental_buildings']=json.loads((ROOT/'data/cusco_buildings_ms.json').read_text())
     assert report['supplemental_buildings']['crop_sha256']==hashlib.sha256(supplement_path.read_bytes()).hexdigest()
     assert report['supplemental_buildings']['osm_sha256']==hashlib.sha256((ROOT/'data/cusco_osm.json').read_bytes()).hexdigest()
-    # Keep the existing decorative label landing. New ML footprints inside
-    # this reserved patch are reported explicitly rather than flattened silently.
-    xmin,ymin,xmax,ymax=label_shape().bounds
-    rows=slice(math.floor((ymin-2+SAMPLING_APRON)/DY),math.ceil((ymax+2+SAMPLING_APRON)/DY))
-    cols=slice(math.floor((xmin-2)/DX),math.ceil((xmax+2)/DX))
-    combined=np.array(buildings,dtype=bool)
-    report['supplemental_buildings']['label_patch_cells_excluded']=int((combined[rows,cols]&~osm_buildings[rows,cols]).sum())
-    combined[rows,cols]=osm_buildings[rows,cols]
-    buildings=Image.fromarray(combined)
+    buildings=Image.fromarray(np.array(buildings,dtype=bool))
     # Separate OSM query: the original highway/building selection omitted airfields.
     airport_data=json.loads((ROOT/'data/cusco_airport.json').read_text())
     counts['airport']={'runway':0,'taxiway':0,'apron':0}
@@ -310,13 +269,6 @@ def raster_layers():
     r=prioritize_buildings(b,r,major,np.array(minor_roads,dtype=bool))
     b=group_buildings(b,r|air)
     satellite_green=landcover()
-    # Keep the existing horizontal sand-coloured lettering landing. Only the
-    # new land-cover tint is excluded here; mapped OSM features stay protected.
-    xmin,ymin,xmax,ymax=label_shape().bounds
-    label_rows=slice(math.floor((ymin-1.5+SAMPLING_APRON)/DY),math.ceil((ymax+1.5+SAMPLING_APRON)/DY))
-    label_cols=slice(math.floor((xmin-1.5)/DX),math.ceil((xmax+1.5)/DX))
-    report['landcover']['label_patch_green_cells_excluded']=int(satellite_green[label_rows,label_cols].sum())
-    satellite_green[label_rows,label_cols]=False
     mat=np.zeros((NY,NX),np.uint8)
     mat[g|satellite_green]=3; mat[b]=2; mat[r|air]=1
     mat[:math.ceil(SAMPLING_APRON/DY)]=0
@@ -380,7 +332,9 @@ def building_roof_heights(ground,mat):
     labels,n=ndi.label(mat==2)
     corner_max=np.maximum.reduce([ground[:-1,:-1],ground[1:,:-1],
                                   ground[:-1,1:],ground[1:,1:]])
-    peaks=ndi.maximum(corner_max,labels,np.arange(n+1))+BUILDING_RISE
+    areas=np.bincount(labels.ravel())*DX*DY
+    rises=np.where(areas<1.,.48,np.where(areas<4.,.64,.80))
+    peaks=ndi.maximum(corner_max,labels,np.arange(n+1))+rises
     peaks[0]=0
     caps=peaks[labels]
     roofs=ground.copy()
@@ -391,7 +345,10 @@ def building_roof_heights(ground,mat):
                               abs(roofs[:-1,1:]-caps),abs(roofs[1:,1:]-caps)])
     assert not n or errors[mat==2].max()<1e-9, 'Non-flat building roof or diagonal building contact'
     report['building_roofs']={'components':int(n),'flat_roof_max_error_mm':float(errors[mat==2].max()) if n else 0.,
-      'wall_orientation':'vertical','minimum_rise_above_block_mm':BUILDING_RISE}
+      'wall_orientation':'vertical','minimum_rise_above_block_mm':BUILDING_RISE,
+      'schematic_height_tiers_mm':[.48,.64,.80],
+      'tier_rule':'group footprint area <1, <4, >=4 mm2; not measured building heights',
+      'tier_counts':{str(h):int((rises[1:]==h).sum()) for h in (.48,.64,.80)}}
     return roofs
 
 def crop_front_margin(x,y,upper,lower,mat):
@@ -448,68 +405,88 @@ def solid_for_material(k,x,y,upper,lower,mat):
     assert solid.status()==md.Error.NoError, (k,solid.status())
     return solid
 
-def label_shape():
-    path=TextPath((0,0),LABEL,size=12,prop=FontProperties(fname='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'))
+def glyph_shape(text,width,height):
+    path=TextPath((0,0),text,size=12,prop=FontProperties(fname='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'))
     shape=Polygon()
-    # XOR contours preserves the counters inside c, s, etc. across glyphs.
     for contour in path.to_polygons():
         poly=Polygon(contour)
         if poly.is_valid and poly.area>0: shape=shape.symmetric_difference(poly)
     xmin,ymin,xmax,ymax=shape.bounds
-    # Stronger strokes inside the existing lettering footprint and flat landing.
-    shape=scale(shape,LABEL_WIDTH/(xmax-xmin),LABEL_HEIGHT/(ymax-ymin),origin=(0,0))
-    xmin,ymin,xmax,ymax=shape.bounds
-    # A feature-free patch on the southwest hillside, inside the original crop.
-    shape=translate(shape,45-(xmin+xmax)/2,18-ymin)
-    return shape
+    shape=translate(shape,-xmin,-ymin)
+    return scale(shape,width/(xmax-xmin),height/(ymax-ymin),origin=(0,0))
 
-def flatten_label_surface(shape,x,y,upper,lower,mat):
-    """Make a small horizontal landing entirely inside the existing model."""
-    xmin,ymin,xmax,ymax=shape.bounds
-    assert 0<xmin-1<xmax+1<SIZE and 0<ymin-1<ymax+1<SIZE
+def extruded_shape(shape,depth):
+    solids=[]
+    for p in shape.geoms if hasattr(shape,'geoms') else [shape]:
+        mesh=trimesh.creation.extrude_polygon(p,depth,engine='earcut')
+        solids.append(md.Manifold(md.Mesh(np.asarray(mesh.vertices,dtype=np.float32),np.asarray(mesh.faces,dtype=np.uint32))))
+    return md.Manifold.batch_boolean(solids,md.OpType.Add)
+
+def information_surface(x,y,upper,lower,mat):
+    """A small top-facing card in the nearest feature-free corner area."""
+    width,height=38.,18.
+    protected=np.isin(mat,[1,2])
+    integral=np.pad(protected.cumsum(0).cumsum(1),((1,0),(1,0)))
+    candidates=[]
     grid_y=y[:,0]
-    first_row=max(0,np.searchsorted(grid_y,ymin-1,side='right')-1)
-    last_row=np.searchsorted(grid_y,ymax+1,side='left')
-    footprint=mat[first_row:last_row,
-                  math.floor((xmin-1)/DX):math.ceil((xmax+1)/DX)]
-    assert footprint.size and not footprint.any(), 'Lettering would cover mapped features'
-    # The flat core includes a margin wider than one grid cell, so every
-    # triangle under a glyph is horizontal. Blend only the surrounding rim.
-    padding,transition=.55,.40
-    distance=np.maximum.reduce([xmin-padding-x,x-(xmax+padding),
-                                ymin-padding-y,y-(ymax+padding),np.zeros_like(x)])
+    for left in range(3,int(SIZE-width-2),2):
+        for bottom in range(3,int(SIZE-height-2),2):
+            i0=max(0,int((left-.6)/DX));i1=min(mat.shape[1],math.ceil((left+width+.6)/DX))
+            j0=max(0,np.searchsorted(grid_y,bottom-.6)-1)
+            j1=min(mat.shape[0],np.searchsorted(grid_y,bottom+height+.6)+1)
+            count=integral[j1,i1]-integral[j0,i1]-integral[j1,i0]+integral[j0,i0]
+            if count==0:
+                corner_distance=min(left,SIZE-width-left)**2+min(bottom,SIZE-height-bottom)**2
+                candidates.append((corner_distance,left,bottom,i0,i1,j0,j1))
+    assert candidates, 'No feature-free information-card location'
+    _,left,bottom,i0,i1,j0,j1=min(candidates)
+    # Brown landing, planar through every glyph; smooth only its outer 0.4-mm rim.
+    mat[j0:j1,i0:i1]=0
+    distance=np.maximum.reduce([left-x,x-left-width,bottom-y,y-bottom-height,np.zeros_like(x)])
     core=distance==0
-    weight=np.clip(1-distance/transition,0,1)
-    weight=weight*weight*(3-2*weight)
+    weight=np.clip(1-distance/.4,0,1);weight=weight*weight*(3-2*weight)
     level=round(float(np.median(upper[core]))/.16)*.16
     upper[:]=upper*(1-weight)+level*weight
     lower[:]=lower*(1-weight)+(level-INLAY_DEPTH)*weight
-    assert np.ptp(upper[core])<1e-10, 'Lettering landing is not flat'
-    report['lettering_surface']={'plane_z_mm':level,'flat_core_xy_mm':
-      [xmin-padding,ymin-padding,xmax+padding,ymax+padding],
-      'transition_mm':transition,'planarity_error_mm':float(np.ptp(upper[core])),
-      'inside_model':True,'mapped_features_covered':0}
-    return level
+    report['lettering_surface']={'flat_core_xy_mm':[left,bottom,left+width,bottom+height],
+      'plane_z_mm':level,'transition_mm':.4,'mapped_features_covered':0,
+      'location_rule':'nearest corner with no mapped roads or buildings, including transition margin',
+      'planarity_error_mm':float(np.ptp(upper[core]))}
+    report['pins']={'count':0,'landmark_rings':0}
+    return left,bottom,level
 
-def text_solid(shape,level):
-    solids=[]
-    for p in shape.geoms if hasattr(shape,'geoms') else [shape]:
-        mesh=trimesh.creation.extrude_polygon(p,LABEL_DEPTH+LABEL_RISE,engine='earcut')
-        mesh.apply_translation((0,0,level-LABEL_DEPTH))
-        solids.append(md.Manifold(md.Mesh(np.asarray(mesh.vertices,dtype=np.float32),np.asarray(mesh.faces,dtype=np.uint32))))
-    label=md.Manifold.batch_boolean(solids,md.OpType.Add)
-    assert label.status()==md.Error.NoError and label.volume()>0
-    assert label.bounding_box()[2]>BASE, 'Letter inlay unexpectedly reaches the base'
-    assert abs(label.volume()-shape.area*(LABEL_DEPTH+LABEL_RISE))<.02, 'Nonuniform letter extrusion'
-    glyphs=[c for c in label.decompose() if abs(c.volume())>1e-6]
-    assert len(glyphs)==len(LABEL), 'A glyph is missing or fragmented'
-    report['lettering']={'text':LABEL,'font':'DejaVu Sans Bold','orientation':'horizontal XY on internal flat terrain patch',
-      'raised_mm':LABEL_RISE,'embedded_mm':LABEL_DEPTH,'glyph_height_mm':LABEL_HEIGHT,
-      'glyph_width_mm':LABEL_WIDTH,
-      'mapped_features_covered':0,'separate_apron_mm':0,'glyph_components':len(glyphs),
-      'volume_mm3':label.volume(),'expected_volume_mm3':shape.area*(LABEL_DEPTH+LABEL_RISE),
-      'bounds':list(label.bounding_box())}
-    return label
+def information_shape(left,bottom):
+    elements=[]
+    lines=[('Cusco',2,12.1,23,3.8),('Scale 1:100 000',2,8.7,27,2.1),
+           ('3200–4430 m',2,5.3,27,2.3),('above sea level',2,2.2,24,1.9)]
+    for text,xx,yy,width,height in lines:
+        elements.append(translate(glyph_shape(text,width,height),left+xx,bottom+yy))
+    # Arrow direction is +Y: geographic north in the terrain projection.
+    arrow=Polygon([(32.2,7),(32.2,11),(30.8,10.2),(32.6,13.2),
+                   (34.4,10.2),(33,11),(33,7)])
+    elements.append(translate(arrow,left,bottom))
+    elements.append(translate(glyph_shape('N',2.5,2.3),left+31.35,bottom+14.1))
+    # 1 km at 1:100,000, integrated with the card rather than the sidewall.
+    from shapely.geometry import box
+    elements.extend([box(left+27,bottom+1,left+37,bottom+1.48),
+                     box(left+27,bottom+.7,left+27.48,bottom+1.8),
+                     box(left+36.52,bottom+.7,left+37,bottom+1.8)])
+    elements.append(translate(glyph_shape('1 km',8,1.6),left+28,bottom+2.2))
+    shape=elements[0]
+    for element in elements[1:]:shape=shape.union(element)
+    report['scale']={'horizontal_denominator':100000,'bar_length_mm':10,'bar_distance_km':1,'bar_label':'1 km',
+      'vertical_exaggeration':1.6,'card_text':[line[0] for line in lines],
+      'elevation_range_rounded_m':[3200,4430],'elevation_reference':'above sea level',
+      'north_direction':'positive model Y'}
+    return shape
+
+def information_solid(left,bottom,level):
+    shape=information_shape(left,bottom)
+    solid=extruded_shape(shape,LABEL_DEPTH+LABEL_RISE).translate((0,0,level-LABEL_DEPTH))
+    report['lettering']={'text':'Cusco','orientation':'horizontal XY on internal terrain card',
+      'raised_mm':LABEL_RISE,'embedded_mm':LABEL_DEPTH,'glyph_height_mm':3.8,'glyph_width_mm':23,
+      'mapped_features_covered':0,'bounds':list(solid.bounding_box())}
+    return solid
 
 def as_mesh(solid):
     m=solid.to_mesh()
@@ -572,24 +549,16 @@ def main():
     print('Rasterizing mapped city blocks, roads and green areas...',flush=True)
     mat,airport=raster_layers(); upper,lower=surface_heights(z,mat,airport)
     x,y,upper,lower,mat=crop_front_margin(x,y,upper,lower,mat)
-    shape=label_shape()
-    label_level=flatten_label_surface(shape,x,y,upper,lower,mat)
+    left,bottom,label_level=information_surface(x,y,upper,lower,mat)
     roofs=building_roof_heights(upper,mat)
     solids=[]
     for i in range(4):
         print('Building watertight solid',NAMES[i],flush=True)
         solids.append(solid_for_material(i,x,y,roofs if i==2 else upper,lower,mat))
-    print('Adding horizontal lettering on the internal flat surface...',flush=True)
-    label=text_solid(shape,label_level)
+    print('Adding top-facing information card with integrated north arrow...',flush=True)
+    label=information_solid(left,bottom,label_level)
     solids[0]=solids[0]-label
     solids[1]=solids[1]+label
-    print('Adding embedded location pin at the supplied GPS coordinate...',flush=True)
-    pin=location_pin(x,y,roofs,lower)
-    embedded=sum((solid^pin).volume() for solid in solids)
-    assert embedded>0, 'Location pin does not intersect the relief'
-    report['location_pin']['embedded_volume_mm3']=embedded
-    for i in range(4):
-        solids[i]=solids[i]+pin if i==2 else solids[i]-pin
     print('Simplifying coplanar mesh detail...',flush=True)
     # Shared terrain/inlay surfaces must stay identical across materials. A
     # zero-tolerance simplification removes only coplanar edges at interfaces.
@@ -647,9 +616,9 @@ def validate_exports():
     assert whole.status()==md.Error.NoError
     # Only the single-colour union is simplified with a nonzero tolerance.
     # Remove sub-micron coincident edges before STL loses indexed topology.
-    whole=whole.simplify(.0001)
+    whole=whole.simplify(.001)
     full=as_mesh(whole)
-    report['monochrome_simplification_tolerance_mm']=.0001
+    report['monochrome_simplification_tolerance_mm']=.001
     full.export(OUT/'Cusco_einfarbig.stl')
     roundtrip=trimesh.load_mesh(OUT/'Cusco_einfarbig.stl',process=True)
     assert roundtrip.is_watertight and roundtrip.is_winding_consistent

@@ -31,7 +31,7 @@ def main():
       'allowed_lateral_step_mm':.18,'max_excess_area_mm2':maximum,
       'joined_stl_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
       'stl_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(OUT.glob('0*.stl'))},
-      'note':'Digital section-support check including the pin shoulder; no physical print claim.'}
+      'note':'Digital support check of the current terrain and information card; no physical print claim.'}
     report=json.loads((OUT/'validation.json').read_text())
     report['overhang_checks']=checks
     (OUT/'validation.json').write_text(json.dumps(report,indent=2))
